@@ -351,7 +351,7 @@ void CprintedPage::createTitlePage(QVector<QPair< QPair<int, int>, CprintedLine>
 	QRect line;
 
 	writer.setFont( Cconsts::Print::FontItalic() );
-	line.setRect( 0, lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*3, image_->width(), lineHeight_ );
+	line.setRect( 0, lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*2.3, image_->width(), lineHeight_*1.3 );
 	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QString("Re-Typeset %1").arg( VERSION ) );
 
 	writer.setFont( Cconsts::Print::Font() );

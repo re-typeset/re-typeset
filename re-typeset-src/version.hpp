@@ -1,3 +1,5 @@
+// This is not The Greatest Code in the World, no! This is just a tribute!
+//
 // Re-Typeset program for converting scanned documents to smaller size of page
 // without changing text size.
 //

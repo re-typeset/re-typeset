@@ -39,8 +39,8 @@ re_typeset_win32_static_zip: re_typeset_win32_static
 re_typeset_win32_static_copy: languages
 	cp re-typeset-src/lang/*.qm build-${VERSION}/re-typeset-win32-static-${VERSION}/res/
 	cp -r re-typeset-src/img/* build-${VERSION}/re-typeset-win32-static-${VERSION}/res/
-	cp re-typeset-src/LICENSE.TXT build-${VERSION}/re-typeset-win32-static-${VERSION}/
-	cat re-typeset-src/version.hpp | grep -v '#' | sed -e 's!//!!g' > build-${VERSION}/re-typeset-win32-static-${VERSION}/RELEASENOTES.TXT
+	cat re-typeset-src/LICENSE.TXT | sed -e 's/$$/\r/g' > build-${VERSION}/re-typeset-win32-static-${VERSION}/LICENSE.TXT
+	cat re-typeset-src/version.hpp | grep -v '#' | sed -e 's!//!!g'| sed -e 's/$$/\r/g' > build-${VERSION}/re-typeset-win32-static-${VERSION}/RELEASENOTES.TXT
 
 re_typeset_win32_static: dirs re_typeset_win32_static_copy
 	${WIN32_CLEAR_ENV} \

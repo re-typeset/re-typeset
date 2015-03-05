@@ -96,6 +96,7 @@ private:
         QString startText_;
 	QString stopText_;
 	CprocessingThread processingThread_;
+	QString changeFileToBasedir( QString dir );
 
 protected:
 	void uIWidgetsSetDisabled( bool disabled );

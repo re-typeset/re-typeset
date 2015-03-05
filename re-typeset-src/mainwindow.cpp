@@ -103,6 +103,7 @@ void CmainWindow::on_pageSizeMargin_valueChanged(int arg1) {
 void CmainWindow::on_srcDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
+	dir=changeFileToBasedir( dir );
 	ui->srcDir->setText( dir );
 	dir+=".out";
 
@@ -132,6 +133,7 @@ void CmainWindow::on_destDirCreate_clicked() {
 void CmainWindow::on_destDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
+	dir=changeFileToBasedir( dir );
 	ui->destDir->setText( dir );
 }
 
@@ -282,6 +284,15 @@ void CmainWindow::switchTranslator(QTranslator & translator, const QString & fil
 	qApp->removeTranslator(&translator); // remove the old translator
 	if(translator.load(filename)) {// load the new translator
 		qApp->installTranslator(&translator);
+	}
+}
+
+QString CmainWindow::changeFileToBasedir(QString dir) {
+	QFileInfo fi( dir );
+	if( fi.isDir() ) {
+		return dir;
+	} else {
+		return fi.path();
 	}
 }
 
