@@ -2,16 +2,16 @@
 
 #include "scanneddocument.hpp"
 
-CprocessingThread::CprocessingThread() {
+ProcessingThread::ProcessingThread() {
 	;//NOOP
 }
 
-CprocessingThread::~CprocessingThread() {
+ProcessingThread::~ProcessingThread() {
 	;//NOOP
 }
 
-void CprocessingThread::run() {
-	CscannedDocument doc( srcDir, destDir, &work, DEbugState );
+void ProcessingThread::run() {
+	ScannedDocument doc( srcDir, destDir, &work, DEbugState );
 
 	connect( &doc, SIGNAL( newProgressBarValue(int,QString,int,int) ), progressBarSignalReciever, SLOT( setProgressBar(int,QString,int,int) ) );
 

@@ -21,7 +21,7 @@
 #include "version.hpp"
 #include <QObject>
 
-QString CLicense::header() {
+QString License::header() {
 	return QObject::tr( "<b>Re-Typeset</b> program for converting scanned documents to smaller size "
 		"of page without changing text size. Version %1, %2.<br>"
 		"<br>"
@@ -32,7 +32,7 @@ QString CLicense::header() {
 }
 
 
-QString CLicense::body()
+QString License::body()
 {
 	return QObject::tr( "This program is free software: you can redistribute it and/or modify it "
 		"under the terms of the GNU General Public License as published by the Free "
@@ -49,7 +49,7 @@ QString CLicense::body()
 		"<a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses/</a>." );
 }
 
-QString CLicense::license() {
+QString License::license() {
 	return "                    GNU GENERAL PUBLIC LICENSE\n"
         "                       Version 3, 29 June 2007\n"
         "\n"

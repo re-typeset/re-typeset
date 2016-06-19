@@ -23,12 +23,12 @@
 #include <QDir>
 #include <QObject>
 
-class CscannedDocument: public QObject {
+class ScannedDocument: public QObject {
 	Q_OBJECT
 public:
-	CscannedDocument();
-	CscannedDocument(QString srcDir, QString destDir, bool * work, bool DEbugState=false);
-	~CscannedDocument();
+	ScannedDocument();
+	ScannedDocument(QString srcDir, QString destDir, bool * work, bool DEbugState=false);
+	~ScannedDocument();
 	/*
 	 * Search directory and create page object for every file in this directory
 	 */
@@ -48,13 +48,13 @@ signals:
 protected:
 	QString srcDir_;
 	QString destDir_;
-	Cstats lineStats_;
+	Stats lineStats_;
 	bool * work_;
 	bool DEbugState_;
-	CscannedPage::EpageNumber number_;
+	ScannedPage::PageNumber number_;
 	bool header_;
 
-	QVector < CscannedPage > pages_;
+	QVector < ScannedPage > pages_;
 
 
 };

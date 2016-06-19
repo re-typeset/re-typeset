@@ -19,16 +19,16 @@
 #include "stats.hpp"
 #include <algorithm>//from STL
 
-Cstats::Cstats() {
+Stats::Stats() {
 	;//NOOP
 }
 
-void Cstats::add(CstatsPack x) {
+void Stats::add(StatsPack x) {
 	heights_.push_back( x.height_ );
 	divsToNextLine_.push_back( x.divToNextLine_ );
 }
 
-void Cstats::calculateParams() {
+void Stats::calculateParams() {
 	if( heights_.size() != 0 && divsToNextLine_.size() != 0 ) {
 		//getting median as n-th element
 		std::nth_element( heights_.begin(), heights_.begin()+heights_.size()/2, heights_.end() );
@@ -42,29 +42,29 @@ void Cstats::calculateParams() {
 	}
 }
 
-CstatsPack Cstats::getStats() {
+StatsPack Stats::getStats() {
 	return stats_;
 }
 
-void Cstats::clear() {
+void Stats::clear() {
 	heights_.clear();
 	divsToNextLine_.clear();
 }
 
-void Cstats::setComicMode() {
+void Stats::setComicMode() {
 	stats_.height_ /= ComicModeDivider;
 	stats_.divToNextLine_ /= ComicModeDivider;
 }
 
-CstatsPack::CstatsPack() {
+StatsPack::StatsPack() {
 	;//NOOP
 }
 
-CstatsPack::CstatsPack(int height, int divToNextLine): height_(height), divToNextLine_(divToNextLine) {
+StatsPack::StatsPack(int height, int divToNextLine): height_(height), divToNextLine_(divToNextLine) {
 	;//NOOP
 }
 
 
-CstatsNumberHeader::CstatsNumberHeader(): header_( 0 ), numberTop_( 0 ), numberBottom_( 0 ) {
+StatsNumberHeader::StatsNumberHeader(): header_( 0 ), numberTop_( 0 ), numberBottom_( 0 ) {
 	;//NOOP
 }

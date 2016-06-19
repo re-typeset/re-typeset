@@ -33,16 +33,16 @@
 #include "processingthread.hpp"
 
 namespace Ui {
-class CmainWindow;
+class MainWindow;
 }
 
-class CmainWindow : public QMainWindow
+class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	explicit CmainWindow(QWidget *parent = 0);
-	~CmainWindow();
+	explicit MainWindow(QWidget *parent = 0);
+	~MainWindow();
 
 public slots:
 	void setProgressBar(int percent, QString name, int n=0 , int of=0);
@@ -73,7 +73,7 @@ private slots:
     void on_actionExit_triggered();
 
 private:
-	Ui::CmainWindow *ui;
+	Ui::MainWindow *ui;
 	QFileDialog::Option QFileDialog_ShowAllFiles; //No '0' value in 'enum Option' in 'QFileDialog' class
 
 
@@ -95,7 +95,7 @@ protected:
 private:
         QString startText_;
 	QString stopText_;
-	CprocessingThread processingThread_;
+	ProcessingThread processingThread_;
 	QString changeFileToBasedir( QString dir );
 
 protected:

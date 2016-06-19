@@ -20,10 +20,10 @@
 #define PRINTEDPAGESTAT_HPP
 #include <QString>
 
-class CprintedPageStat
+class PrintedPageStat
 {
 public:
-	CprintedPageStat();
+	PrintedPageStat();
 	QString name_;
 	int numOfAll_;
 	int numOnPage_;

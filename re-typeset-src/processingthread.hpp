@@ -2,13 +2,13 @@
 #define CPROCESSINGTHREAD_HPP
 #include <QThread>
 
-class CprocessingThread : public QThread
+class ProcessingThread : public QThread
 {
 	//Q_OBJECT
 
 public:
-	CprocessingThread();
-	virtual ~CprocessingThread();
+	ProcessingThread();
+	virtual ~ProcessingThread();
 
 	void run();
 

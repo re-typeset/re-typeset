@@ -18,6 +18,6 @@
 
 #include "printedpagestat.hpp"
 
-CprintedPageStat::CprintedPageStat() {
+PrintedPageStat::PrintedPageStat() {
 	//NOOP;
 }

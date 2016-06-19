@@ -21,17 +21,17 @@
 #include "version.hpp"
 #include <QPainter>
 
-CprintedPage::CprintedPage() {
+PrintedPage::PrintedPage() {
 	;//NOOP
 }
 
-CprintedPage::~CprintedPage() {
+PrintedPage::~PrintedPage() {
 	if( image_!=Q_NULLPTR ) {
 		delete image_;
 	}
 }
 
-CprintedPage::CprintedPage(int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
+PrintedPage::PrintedPage(int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
 						   bool comicMode, bool DEbugState): margin_( margin ), isDividedWord_(false), justify_(justify),
 	rotateImages_(rotateImages), outLastPage_(-1), comicMode_(comicMode), DEbugState_( DEbugState ) {
 	image_ = new QImage( width, height, QImage::Format_RGB32 );
@@ -43,7 +43,7 @@ CprintedPage::CprintedPage(int width, int height, int margin, int fontHeight, bo
 
 }
 
-void CprintedPage::addNumberHeader(CprintedLine & numHead, int srcPageNum) {
+void PrintedPage::addNumberHeader(PrintedLine & numHead, int srcPageNum) {
 	disableProgressBar=false;
 	srcPageNum_=srcPageNum;
 	int localCursorX=margin_;
@@ -64,7 +64,7 @@ void CprintedPage::addNumberHeader(CprintedLine & numHead, int srcPageNum) {
 	}
 }
 
-bool CprintedPage::printImagesFromQueue(bool final) {//true -- create new page
+bool PrintedPage::printImagesFromQueue(bool final) {//true -- create new page
 	bool firstStep=true;
 	QPainter writer( image_ );
 	while( imageQueue_.size()>0 ) {
@@ -97,7 +97,7 @@ bool CprintedPage::printImagesFromQueue(bool final) {//true -- create new page
 }
 
 
-bool CprintedPage::printLastLine() {
+bool PrintedPage::printLastLine() {
 	QPainter writer( image_ );
 	if( line_.maxHeight_+margin_+cursorY > image_->height() ) {//end of page
 		return true;
@@ -109,7 +109,7 @@ bool CprintedPage::printLastLine() {
 	return false;
 }
 
-bool CprintedPage::addParagraph(CprintedLine & paragraph) {
+bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 	if( paragraph.isEmpty() ) {
 		return false;
 	}
@@ -222,7 +222,7 @@ bool CprintedPage::addParagraph(CprintedLine & paragraph) {
 }
 
 
-void CprintedPage::saveAndClear(QString fileName, bool hardMargins) {	
+void PrintedPage::saveAndClear(QString fileName, bool hardMargins) {	
 
 	if( hardMargins ) {
 		image_->setPixel( 0, 0, QColor( 0, 0, 0 ).rgb() );
@@ -235,24 +235,24 @@ void CprintedPage::saveAndClear(QString fileName, bool hardMargins) {
 	if( image_->width()-Cconsts::Print::TypicalWatermarkLength > 0 ) {
 		dx = (image_->width()-Cconsts::Print::TypicalWatermarkLength)/2;
 	}
-	QPoint startPoint( dx, image_->height()-CprintedPixelFont::TextHeight-1 );
-	startPoint=CprintedPixelFont::putText( *image_, startPoint, CprintedPixelFont::Przeskladv );
-	startPoint.rx() += CprintedPixelFont::Space;
+	QPoint startPoint( dx, image_->height()-PrintedPixelFont::TextHeight-1 );
+	startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Przeskladv );
+	startPoint.rx() += PrintedPixelFont::Space;
 	
 	const char * verPos=VERSION;	
 	while( * verPos ) {
 		if( (* verPos) >= '0' && (* verPos) <= '9' ) {
-			startPoint=CprintedPixelFont::putText( *image_, startPoint, CprintedPixelFont::Number, (* verPos)-'0' );
+			startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Number, (* verPos)-'0' );
 		} else {
-			startPoint=CprintedPixelFont::putText( *image_, startPoint, CprintedPixelFont::Dot );
+			startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Dot );
 		}
 		startPoint.rx() += 1;
 		++verPos;
 	}
 	startPoint.rx() -= 1;
 		
-	startPoint.rx() += CprintedPixelFont::Space;
-	startPoint=CprintedPixelFont::putText( *image_, startPoint, CprintedPixelFont::cPiotrMika );
+	startPoint.rx() += PrintedPixelFont::Space;
+	startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::cPiotrMika );
 
 	image_->save( fileName, "PNG" );
 	image_->fill( Qt::white );
@@ -260,7 +260,7 @@ void CprintedPage::saveAndClear(QString fileName, bool hardMargins) {
 	cursorY=margin_;
 
 	if( srcPageNum_!=-1 ) {
-		CprintedPageStat st;
+		PrintedPageStat st;
 		st.name_=fileName;
 		st.disableProgressBar=disableProgressBar;
 
@@ -281,7 +281,7 @@ void CprintedPage::saveAndClear(QString fileName, bool hardMargins) {
 	}
 }
 
-void CprintedPage::addProgressBarsForAllPages() {
+void PrintedPage::addProgressBarsForAllPages() {
 	if( outStat_.isEmpty() ) {
 		return;
 	}
@@ -337,13 +337,13 @@ void CprintedPage::addProgressBarsForAllPages() {
 	}
 }
 
-int CprintedPage::numTocItems() {
+int PrintedPage::numTocItems() {
 	int writeArea=image_->height()-2*margin_;
 	writeArea -= 7*(Cconsts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
 	return writeArea / (lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1) ) ;
 }
 
-void CprintedPage::createTitlePage(QVector<QPair< QPair<int, int>, CprintedLine> > & toc) {
+void PrintedPage::createTitlePage(QVector<QPair< QPair<int, int>, PrintedLine> > & toc) {
 	image_->setDotsPerMeterX( Cconsts::Print::DotsPerMeter( lineHeight_ ) );
 	image_->setDotsPerMeterY( Cconsts::Print::DotsPerMeter( lineHeight_ ) );
 
@@ -420,7 +420,7 @@ void CprintedPage::createTitlePage(QVector<QPair< QPair<int, int>, CprintedLine>
 }
 
 
-QImage CprintedPage::join(const QImage & a, const QImage & b) {
+QImage PrintedPage::join(const QImage & a, const QImage & b) {
 	int gap = round( Cconsts::Print::SpaceBetweenLetters * lineHeight_ );
 	QImage j( a.width()+gap+b.width(), max( a.height(), b.height() ), QImage::Format_RGB32 );
 	j.fill( Qt::white );

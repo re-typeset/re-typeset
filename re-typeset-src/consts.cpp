@@ -37,7 +37,7 @@ int max( int a, int b) {
 
 
 
-int Cconsts::MinHeightForOneVerticalDiv(CstatsPack stats) {
+int Cconsts::MinHeightForOneVerticalDiv(StatsPack stats) {
 //	return (int)( (double)(2*stats.height_ + stats.divToNextLine_)*1.2 ); no math formulas protection
 	return (int)( (double)( 2*stats.height_ ) );
 }
@@ -54,12 +54,12 @@ Cconsts::Cconsts() {
 	QCoreApplication::quit();
 }
 
-int Cconsts::AccidentiallyConnectedLines::MaxHeight(CstatsPack stats) {
+int Cconsts::AccidentiallyConnectedLines::MaxHeight(StatsPack stats) {
 	return (MaxNumberOfLines*stats.height_
 			+ (MaxNumberOfLines-1)*stats.divToNextLine_)*1.1;
 }
 
-bool Cconsts::AccidentiallyConnectedLines::CanCut(CstatsPack stats, int textWeight1, int spaceWeight1,
+bool Cconsts::AccidentiallyConnectedLines::CanCut(StatsPack stats, int textWeight1, int spaceWeight1,
 												  int textWeight2, int spaceWeight2, int textWeight3) {
 	if( min( min( textWeight1, textWeight2 ), textWeight3 ) > max( spaceWeight1, spaceWeight2 )*TextToSpaceCoefficient
 			&& spaceWeight1 < WeightOfConnectionInMedian*stats.height_

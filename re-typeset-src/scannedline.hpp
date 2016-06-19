@@ -28,9 +28,9 @@
 #include "printedline.hpp"
 
 
-class CscannedLine: public QRect {
+class ScannedLine: public QRect {
 public:
-	CscannedLine();
+	ScannedLine();
 
 	bool isImage_;
 	bool isNewParagraph_;
@@ -46,15 +46,15 @@ public:
 
 	int blackPixelsInRow( const QImage & image, int y );
 
-	QVector < CscannedLine > collapseLine(const QImage & image, CstatsPack stats );
+	QVector < ScannedLine > collapseLine(const QImage & image, StatsPack stats );
 
-	bool cutAccidentiallyConnectedLines( const QImage & image, CstatsPack stats, QVector < CscannedLine > & out );
-	void preciseDivideHorizontal( const QImage & image, CstatsPack stats, QVector < CscannedLine > & out, int level=0);
-	void preciseDivideVertical( const QImage & image, CstatsPack stats, QVector < CscannedLine > & out, int level=0 );
+	bool cutAccidentiallyConnectedLines( const QImage & image, StatsPack stats, QVector < ScannedLine > & out );
+	void preciseDivideHorizontal( const QImage & image, StatsPack stats, QVector < ScannedLine > & out, int level=0);
+	void preciseDivideVertical( const QImage & image, StatsPack stats, QVector < ScannedLine > & out, int level=0 );
 	void checkIfHasDividedWordAtEnd( const QImage & image);
 
-	void getWords( const QImage & imageMono, const QImage & imageColor, CstatsPack stats,
-				   CprintedLine & par , double scalingRatio, int maxWordLength, bool fullColor=false);
+	void getWords( const QImage & imageMono, const QImage & imageColor, StatsPack stats,
+				   PrintedLine & par , double scalingRatio, int maxWordLength, bool fullColor=false);
 
 };
 

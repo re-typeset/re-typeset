@@ -27,7 +27,7 @@
 
 #define DE qDebug()
 
-CmainWindow::CmainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::CmainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
 	QFileDialog_ShowAllFiles=static_cast< QFileDialog::Option >( 0 ); //No '0' value in 'enum Option' in 'QFileDialog' class
 	ui->setupUi(this);
 
@@ -48,11 +48,11 @@ CmainWindow::CmainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Cmai
 	ui->outStartButton->setText( startText_ );
 }
 
-CmainWindow::~CmainWindow() {
+MainWindow::~MainWindow() {
 	delete ui;
 }
 
-void CmainWindow::setProgressBar(int percent, QString name, int n, int of) {
+void MainWindow::setProgressBar(int percent, QString name, int n, int of) {
 	ui->outProgressBar->setValue( percent );
 	if( of !=0 ) {
 		ui->outProgressBar->setFormat( tr("%p%, step %1 of %2, %3" ).arg( n ).arg( of ).arg( name ) );
@@ -60,7 +60,7 @@ void CmainWindow::setProgressBar(int percent, QString name, int n, int of) {
 	setWindowTitle( ui->outProgressBar->text() + " — Re-Typeset" );
 }
 
-void CmainWindow::processingFinished() {
+void MainWindow::processingFinished() {
 
 	ui->outStartButton->setText( startText_ );
 	ui->outStartButton->setDisabled( false );
@@ -76,31 +76,31 @@ void CmainWindow::processingFinished() {
 	}
 }
 
-void CmainWindow::on_textSizeHeight_valueChanged(int arg1) {
+void MainWindow::on_textSizeHeight_valueChanged(int arg1) {
 	ui->textLinesPerPage->blockSignals( true );
 	ui->textLinesPerPage->setValue( (ui->pageSizeHeight->value() - ui->pageSizeMargin->value()*2 )
-									/ Cconsts::LineHeightFromTextHeight( arg1 ) - 1 );
+									/ Consts::LineHeightFromTextHeight( arg1 ) - 1 );
 	ui->textLinesPerPage->blockSignals( false );
 }
 
-void CmainWindow::on_textLinesPerPage_valueChanged(int arg1) {
+void MainWindow::on_textLinesPerPage_valueChanged(int arg1) {
 	ui->textSizeHeight->blockSignals( true );
-	ui->textSizeHeight->setValue( Cconsts::TextHeightFromLineHeight(
+	ui->textSizeHeight->setValue( Consts::TextHeightFromLineHeight(
 									  ( ui->pageSizeHeight->value() - ui->pageSizeMargin->value()*2 )
 									  / ( arg1 +1 ) ) );
 	ui->textSizeHeight->blockSignals( false );
 }
-void CmainWindow::on_pageSizeHeight_valueChanged(int arg1) {
+void MainWindow::on_pageSizeHeight_valueChanged(int arg1) {
 	(void) arg1;
 	on_textSizeHeight_valueChanged( ui->textSizeHeight->value() );
 }
 
-void CmainWindow::on_pageSizeMargin_valueChanged(int arg1) {
+void MainWindow::on_pageSizeMargin_valueChanged(int arg1) {
 	(void) arg1;
 	on_textSizeHeight_valueChanged( ui->textSizeHeight->value() );
 }
 
-void CmainWindow::on_srcDirButton_clicked() {
+void MainWindow::on_srcDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
 	dir=changeFileToBasedir( dir );
@@ -120,7 +120,7 @@ void CmainWindow::on_srcDirButton_clicked() {
 
 }
 
-void CmainWindow::on_destDirCreate_clicked() {
+void MainWindow::on_destDirCreate_clicked() {
 	QString dir=ui->srcDir->text();
 	dir+=".out";
 	if( QDir().mkdir( dir ) ) {
@@ -130,27 +130,27 @@ void CmainWindow::on_destDirCreate_clicked() {
 	}
 }
 
-void CmainWindow::on_destDirButton_clicked() {
+void MainWindow::on_destDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
 	dir=changeFileToBasedir( dir );
 	ui->destDir->setText( dir );
 }
 
-void CmainWindow::on_treshSlider_sliderMoved(int position) {
+void MainWindow::on_treshSlider_sliderMoved(int position) {
 	ui->treshVal->setValue( position );
 }
 
-void CmainWindow::on_treshVal_valueChanged(int arg1) {
+void MainWindow::on_treshVal_valueChanged(int arg1) {
 	ui->treshSlider->setValue( arg1 );
 }
 
-void CmainWindow::on_treshSlider_valueChanged(int value) {
+void MainWindow::on_treshSlider_valueChanged(int value) {
 	ui->treshVal->setValue( value );
 }
 
 
-void CmainWindow::on_outStartButton_clicked() {
+void MainWindow::on_outStartButton_clicked() {
 	if( ui->outStartButton->text() == startText_ ) {
 		if( ( ! ui->srcDir->text().isEmpty() ) && ( ! ui->destDir->text().isEmpty() )
 				&& QDir( ui->srcDir->text() ).exists()
@@ -198,34 +198,34 @@ void CmainWindow::on_outStartButton_clicked() {
 	}
 }
 
-void CmainWindow::on_predefScreen800_clicked() {
+void MainWindow::on_predefScreen800_clicked() {
 	ui->pageSizeHeight->setValue( 800 );
 	ui->pageSizeWidth->setValue( 600 );
 }
 
-void CmainWindow::on_predefScreen1024_clicked() {
+void MainWindow::on_predefScreen1024_clicked() {
 	ui->pageSizeHeight->setValue( 1024 );
 	ui->pageSizeWidth->setValue( 758 );
 }
 
-void CmainWindow::on_predefScreen1440_clicked() {
+void MainWindow::on_predefScreen1440_clicked() {
 	ui->pageSizeHeight->setValue( 1440 );
 	ui->pageSizeWidth->setValue( 1080 );
 }
 
-void CmainWindow::on_predefLines15_clicked() {
+void MainWindow::on_predefLines15_clicked() {
 	ui->textLinesPerPage->setValue( 15 );
 }
 
-void CmainWindow::on_predefLines20_clicked() {
+void MainWindow::on_predefLines20_clicked() {
 	ui->textLinesPerPage->setValue( 20 ) ;
 }
 
-void CmainWindow::on_predefLines25_clicked() {
+void MainWindow::on_predefLines25_clicked() {
 	ui->textLinesPerPage->setValue( 25 ) ;
 }
 
-void CmainWindow::uIWidgetsSetDisabled(bool disabled) {
+void MainWindow::uIWidgetsSetDisabled(bool disabled) {
 	ui->srcDirLabel->setDisabled( disabled );
 	ui->srcDir->setDisabled( disabled );
 	ui->srcDirButton->setDisabled( disabled );
@@ -241,7 +241,7 @@ void CmainWindow::uIWidgetsSetDisabled(bool disabled) {
     ui->actionShowDebugImages->setDisabled( disabled );
 }
 
-void CmainWindow::closeEvent(QCloseEvent * event) {
+void MainWindow::closeEvent(QCloseEvent * event) {
 	if( ui->outStartButton->text() == stopText_ ) {
 		if( QMessageBox::Yes == QMessageBox::question( this, tr("Stop?"), tr("Do you want to stop processing?") ) ) {
 			processingThread_.work=false;
@@ -255,7 +255,7 @@ void CmainWindow::closeEvent(QCloseEvent * event) {
 	}
 }
 
-void CmainWindow::on_actionAbout_triggered() {
+void MainWindow::on_actionAbout_triggered() {
 	QMessageBox box;
 
 	box.setStandardButtons( QMessageBox::Ok );
@@ -263,31 +263,31 @@ void CmainWindow::on_actionAbout_triggered() {
 	box.setIcon( QMessageBox::Information );
 
 	box.setWindowTitle( tr( "Re-Typeset" ) );
-	box.setText( CLicense::header() );
-	box.setInformativeText( CLicense::body() );
-	box.setDetailedText( CLicense::license() );
+	box.setText( License::header() );
+	box.setInformativeText( License::body() );
+	box.setDetailedText( License::license() );
 
 	box.exec();
 }
 
-void CmainWindow::on_actionAboutQt_triggered() {
+void MainWindow::on_actionAboutQt_triggered() {
    QMessageBox::aboutQt( this, "Qt" );
 }
 
-void CmainWindow::on_actionExit_triggered() {
+void MainWindow::on_actionExit_triggered() {
     qApp->exit( 0 );
 }
 
 
 //MULTILANG: see mainwindow.hpp header
-void CmainWindow::switchTranslator(QTranslator & translator, const QString & filename) {
+void MainWindow::switchTranslator(QTranslator & translator, const QString & filename) {
 	qApp->removeTranslator(&translator); // remove the old translator
 	if(translator.load(filename)) {// load the new translator
 		qApp->installTranslator(&translator);
 	}
 }
 
-QString CmainWindow::changeFileToBasedir(QString dir) {
+QString MainWindow::changeFileToBasedir(QString dir) {
 	QFileInfo fi( dir );
 	if( fi.isDir() ) {
 		return dir;
@@ -296,7 +296,7 @@ QString CmainWindow::changeFileToBasedir(QString dir) {
 	}
 }
 
-void CmainWindow::loadLanguage(const QString & rLanguage) {
+void MainWindow::loadLanguage(const QString & rLanguage) {
 	if(currLang_ != rLanguage) {
 		currLang_ = rLanguage;
 		QLocale locale = QLocale(currLang_);
@@ -306,7 +306,7 @@ void CmainWindow::loadLanguage(const QString & rLanguage) {
 	}
 }
 
-void CmainWindow::createLanguageMenu() {
+void MainWindow::createLanguageMenu() {
 	QActionGroup* langGroup = new QActionGroup(ui->menuLanguage);
 	langGroup->setExclusive(true);
 	connect(langGroup, SIGNAL(triggered(QAction *)), this, SLOT(slotLanguageChanged(QAction *)));
@@ -338,7 +338,7 @@ void CmainWindow::createLanguageMenu() {
 	}
 }
 
-void CmainWindow::changeEvent(QEvent * event) {
+void MainWindow::changeEvent(QEvent * event) {
 	if(0 != event) {
 		switch(event->type()) {
 		case QEvent::LanguageChange:// this event is send if a translator is loaded
@@ -357,7 +357,7 @@ void CmainWindow::changeEvent(QEvent * event) {
 	QMainWindow::changeEvent(event);
 }
 
-void CmainWindow::slotLanguageChanged(QAction * action) {
+void MainWindow::slotLanguageChanged(QAction * action) {
 	if(0 != action) {// load the language dependant on the action content
 		loadLanguage(action->data().toString());
 	}

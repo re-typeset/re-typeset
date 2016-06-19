@@ -22,10 +22,10 @@
 #include <QPoint>
 #include <QColor>
 
-class CprintedPixelFont
+class PrintedPixelFont
 {
 public:
-	CprintedPixelFont();
+	PrintedPixelFont();
 	enum Text { Number, Przeskladv, cPiotrMika, In, Out, Num, Dot, Comma, Colon };
 	static const int TextHeight=5;
 	static const int Space=4;

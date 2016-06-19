@@ -20,20 +20,20 @@
 #define STATS_HPP
 #include <QVector>
 
-class CstatsPack {
+class StatsPack {
 public:
-	CstatsPack();
-	CstatsPack( int height, int divToNextLine );
+	StatsPack();
+	StatsPack( int height, int divToNextLine );
 	int height_;
 	int divToNextLine_;
 };
 
-class Cstats {
+class Stats {
 public:
-	Cstats();
-	void add( CstatsPack x );
+	Stats();
+	void add( StatsPack x );
 	void calculateParams();
-	CstatsPack getStats();
+	StatsPack getStats();
 	void clear();
 	void setComicMode();
 
@@ -41,13 +41,13 @@ public:
 protected:
 	QVector < int > heights_;
 	QVector < int > divsToNextLine_;
-	CstatsPack stats_;
+	StatsPack stats_;
 
 };
 
-class CstatsNumberHeader {
+class StatsNumberHeader {
 public:
-	CstatsNumberHeader();
+	StatsNumberHeader();
 	int header_;
 	int numberTop_;
 	int numberBottom_;

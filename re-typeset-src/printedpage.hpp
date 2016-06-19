@@ -27,17 +27,17 @@
 #include <QPair>
 #include <QDateTime>
 
-class CprintedPage
+class PrintedPage
 {
 public:
-	CprintedPage();
-	virtual ~CprintedPage();
-	CprintedPage( int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
+	PrintedPage();
+	virtual ~PrintedPage();
+	PrintedPage( int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
 				  bool comicMode, bool DEbugState=false );
 
-	void addNumberHeader( CprintedLine & numHead, int srcPageNum );
+	void addNumberHeader( PrintedLine & numHead, int srcPageNum );
 
-	bool addParagraph(CprintedLine & paragraph );//false == whole paragraph used
+	bool addParagraph(PrintedLine & paragraph );//false == whole paragraph used
 
 	bool printLastLine();
 
@@ -49,7 +49,7 @@ public:
 
 	int numTocItems();
 
-	void createTitlePage(QVector<QPair<QPair<int, int>, CprintedLine> > & toc );
+	void createTitlePage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc );
 
 protected:
 	int margin_;
@@ -58,8 +58,8 @@ protected:
 	QImage * image_;
 	int cursorX;
 	int cursorY;
-	CprintedLine line_;
-	CprintedLine imageQueue_;
+	PrintedLine line_;
+	PrintedLine imageQueue_;
 	QImage dividedWord_;
 	bool isDividedWord_;
 	bool justify_;
@@ -70,7 +70,7 @@ protected:
 	int outLastPage_;
 	bool comicMode_;
 	bool DEbugState_;
-	QVector< CprintedPageStat > outStat_;
+	QVector< PrintedPageStat > outStat_;
 
 	QImage join( const QImage & a, const QImage & b );
 

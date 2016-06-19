@@ -18,7 +18,7 @@
 
 #include "scannedline.hpp"
 
-CscannedLine::CscannedLine() {
+ScannedLine::ScannedLine() {
 	isImage_=false;
 	isNewParagraph_=false;
 	toDelete_=false;
@@ -27,11 +27,11 @@ CscannedLine::CscannedLine() {
 	spaceToNextLine_=-1;
 }
 
-void CscannedLine::setNextLineTop(int value) {
+void ScannedLine::setNextLineTop(int value) {
 	spaceToNextLine_ = value-(top()+height());
 }
 
-bool CscannedLine::trim(const QImage & image) {
+bool ScannedLine::trim(const QImage & image) {
 	QRgb black=QColor( 0, 0 ,0 ).rgb();
 	int x=0, y=0;
 	for( x=0; x<this->width(); ++x ) {
@@ -78,7 +78,7 @@ bool CscannedLine::trim(const QImage & image) {
 	return true;
 }
 
-int CscannedLine::blackPixelsInRow(const QImage & image, int y) {
+int ScannedLine::blackPixelsInRow(const QImage & image, int y) {
 	int c=0;
 	QRgb black=QColor( 0, 0 ,0 ).rgb();
 	for( int i=this->left(), maxI=this->width()+this->left(); i<maxI; ++i ) {
@@ -89,8 +89,8 @@ int CscannedLine::blackPixelsInRow(const QImage & image, int y) {
 	return c;
 }
 
-QVector<CscannedLine> CscannedLine::collapseLine(const QImage & image, CstatsPack stats ) {
-	QVector< CscannedLine > out;
+QVector<ScannedLine> ScannedLine::collapseLine(const QImage & image, StatsPack stats ) {
+	QVector< ScannedLine > out;
 	if( ! this->trim( image ) ) {
 		return out;
 	}
@@ -113,9 +113,9 @@ QVector<CscannedLine> CscannedLine::collapseLine(const QImage & image, CstatsPac
 	return out;
 }
 
-void CscannedLine::preciseDivideVertical(const QImage & image, CstatsPack stats, QVector<CscannedLine> & out, int level) {
-	QVector < CscannedLine > columns;
-	CscannedLine currentColumn;
+void ScannedLine::preciseDivideVertical(const QImage & image, StatsPack stats, QVector<ScannedLine> & out, int level) {
+	QVector < ScannedLine > columns;
+	ScannedLine currentColumn;
 	currentColumn.setTop( this->top() );
 	currentColumn.setBottom( this->bottom() );
 
@@ -158,8 +158,8 @@ void CscannedLine::preciseDivideVertical(const QImage & image, CstatsPack stats,
 	}
 
 	if( columns.size() > 1 ) {
-		QVector< QVector< CscannedLine > > tmpOut;
-		QVector< CscannedLine > emptyOut;
+		QVector< QVector< ScannedLine > > tmpOut;
+		QVector< ScannedLine > emptyOut;
 		for( int i=0; i<columns.size(); ++i ) {
 			tmpOut.push_back( emptyOut );
 			columns[i].preciseDivideHorizontal( image, stats, tmpOut[i], level-1 );
@@ -183,10 +183,10 @@ void CscannedLine::preciseDivideVertical(const QImage & image, CstatsPack stats,
 	}
 }
 
-void CscannedLine::preciseDivideHorizontal(const QImage & image, CstatsPack stats, QVector<CscannedLine> & out, int level) {
-	QVector < CscannedLine > lines;
+void ScannedLine::preciseDivideHorizontal(const QImage & image, StatsPack stats, QVector<ScannedLine> & out, int level) {
+	QVector < ScannedLine > lines;
 
-	CscannedLine currentLine;
+	ScannedLine currentLine;
 	currentLine.setLeft( this->left() );
 	currentLine.setRight( this->right() );
 	currentLine.blockLeftPos_=this->blockLeftPos_;
@@ -252,7 +252,7 @@ void CscannedLine::preciseDivideHorizontal(const QImage & image, CstatsPack stat
 	}
 }
 
-void CscannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
+void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 	QRgb black=QColor( 0, 0 ,0 ).rgb();
 	int dirt=0;
 
@@ -307,7 +307,7 @@ void CscannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 	}
 }
 
-void CscannedLine::getWords(const QImage & imageMono, const QImage & imageColor, CstatsPack stats, CprintedLine & par,
+void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, StatsPack stats, PrintedLine & par,
 							double scalingRatio, int maxWordLength, bool fullColor) {
 
 
@@ -384,7 +384,7 @@ void CscannedLine::getWords(const QImage & imageMono, const QImage & imageColor,
 	}
 }
 
-bool CscannedLine::cutAccidentiallyConnectedLines(const QImage & image, CstatsPack stats, QVector<CscannedLine> & out) {
+bool ScannedLine::cutAccidentiallyConnectedLines(const QImage & image, StatsPack stats, QVector<ScannedLine> & out) {
 
 	if( this->height() < ( (2*Cconsts::AccidentiallyConnectedLines::MaxNumberOfLines-1)*stats.height_
 						   + (2*Cconsts::AccidentiallyConnectedLines::MaxNumberOfLines-3)*stats.divToNextLine_ )/2 ) {//div by 2

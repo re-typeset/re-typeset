@@ -22,15 +22,14 @@
 
 #include <QString>
 
-class CLicense
-{
+class License{
 public:
 	static QString header();
 	static QString body();
 	static QString license();
 
 private:
-    CLicense();
+	License();
 };
 
 #endif // LICENSE_HPP

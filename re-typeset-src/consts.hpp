@@ -31,7 +31,7 @@ int max( int a, int b);
 
 int round( double a );
 
-class Cconsts {
+class Consts {
 public:
 
 	/*
@@ -61,7 +61,7 @@ public:
 	static const double MaxHeightForJoinedLineInHerHeight = 1.4;
 
 
-	static int MinHeightForOneVerticalDiv( CstatsPack stats );
+	static int MinHeightForOneVerticalDiv( StatsPack stats );
 
 
 	/*
@@ -104,9 +104,9 @@ public:
 		 * maksymalna wysokość bloku, który może byc rozbijany przez
 		 * CscannedLine::cutAccidentiallyConnectedLines()
 		 */
-		static int MaxHeight( CstatsPack stats );
+		static int MaxHeight( StatsPack stats );
 
-		static bool CanCut( CstatsPack stats, int textWeight1, int spaceWeight1, int textWeight2, int spaceWeight2=-1, int textWeight3=999999 );
+		static bool CanCut( StatsPack stats, int textWeight1, int spaceWeight1, int textWeight2, int spaceWeight2=-1, int textWeight3=999999 );
 
 		static const int TextToSpaceCoefficient = 10;
 
@@ -186,7 +186,7 @@ public:
 		Progress();
 	};
 private:
-	Cconsts();
+	Consts();
 };
 
 #endif // CONSTS_HPP

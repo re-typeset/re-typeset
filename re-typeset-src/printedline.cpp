@@ -18,7 +18,7 @@
 
 #include "printedline.hpp"
 
-CprintedLine::CprintedLine(): isNewParagraph_(false), hasDividedWordAtEnd_(false), isImage_(false),
+PrintedLine::PrintedLine(): isNewParagraph_(false), hasDividedWordAtEnd_(false), isImage_(false),
 	isEmptyLineBefore_(false), sumLengths_(0), maxHeight_(0) {
 	;//NOOP
 }

@@ -21,10 +21,10 @@
 #include <QVector>
 #include <QImage>
 
-class CprintedLine : public QVector <QImage>
+class PrintedLine : public QVector <QImage>
 {
 public:
-	CprintedLine();
+	PrintedLine();
 	bool isNewParagraph_;
 	bool hasDividedWordAtEnd_;
 	bool isImage_;

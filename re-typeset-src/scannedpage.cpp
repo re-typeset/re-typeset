@@ -18,17 +18,17 @@
 
 #include "scannedpage.hpp"
 
-CscannedPage::CscannedPage() {
+ScannedPage::ScannedPage() {
 	;//NOOP
 }
 
-CscannedPage::CscannedPage(QString fileMono, QString fileColor): fileMono_(fileMono), fileColor_(fileColor), processedLine_( 0 ) {
+ScannedPage::ScannedPage(QString fileMono, QString fileColor): fileMono_(fileMono), fileColor_(fileColor), processedLine_( 0 ) {
 	;//NOOP
 }
 
-void CscannedPage::getLinesAndHeights(Cstats & stats) {
+void ScannedPage::getLinesAndHeights(Stats & stats) {
 	QImage image( fileMono_ );
-	CscannedLine currentLine;
+	ScannedLine currentLine;
 	currentLine.setLeft( 0 );
 	currentLine.blockLeftPos_=0;
 	currentLine.setRight( image.width()-1 );
@@ -57,7 +57,7 @@ void CscannedPage::getLinesAndHeights(Cstats & stats) {
 				currentLine.setBottom( i-1 );
 				lineStarted=false;
 				if( ! lines_.empty() ) {
-					CstatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
+					StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
 					stats.add( pack );
 				}
 				lines_.push_back( currentLine );
@@ -68,18 +68,18 @@ void CscannedPage::getLinesAndHeights(Cstats & stats) {
 		currentLine.setBottom( image.height()-1 );
 		lineStarted=false;
 		lines_.push_back( currentLine );
-		CstatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
+		StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
 		stats.add( pack );
 	}
 
 
 }
 
-void CscannedPage::reConnectDots(CstatsPack stats) {
+void ScannedPage::reConnectDots(StatsPack stats) {
 
 	for( int i=1; i<lines_.size(); ++i ) {
-		CscannedLine & up=lines_[i-1];
-		CscannedLine & mid=lines_[i];
+		ScannedLine & up=lines_[i-1];
+		ScannedLine & mid=lines_[i];
 		//joining dots ex: `` ijiji''
 
 		if( up.height() < Cconsts::MinHeightForLineInMedian*stats.height_ ) {
@@ -100,10 +100,10 @@ void CscannedPage::reConnectDots(CstatsPack stats) {
 	}
 }
 
-void CscannedPage::trimDivideLines(CstatsPack stats) {
+void ScannedPage::trimDivideLines(StatsPack stats) {
 	QImage image( fileMono_ );
 	for( int i=0; i<lines_.size(); ++i ) {
-		QVector< CscannedLine > newLines = lines_[i].collapseLine( image, stats );
+		QVector< ScannedLine > newLines = lines_[i].collapseLine( image, stats );
 		if( ! newLines.empty() ) {//line returns lines on which she was divided
 			lines_[i]=newLines[0];
 			for( int j=1; j<newLines.size(); ++j ) {
@@ -117,15 +117,15 @@ void CscannedPage::trimDivideLines(CstatsPack stats) {
 	}
 }
 
-void CscannedPage::connectDescriptionsToImages(CstatsPack stats) {
+void ScannedPage::connectDescriptionsToImages(StatsPack stats) {
 	QImage image( fileMono_ );
 	QRgb black=QColor( 0, 0 ,0 ).rgb();
 	int spaceX=Cconsts::MinHorizontalSpaceInMedian*stats.height_;
-	enum Estage {FirstSpace, Description, EndSpace, CorrectDescription};
+	enum Stage {FirstSpace, Description, EndSpace, CorrectDescription};
 
 	for( int i=0; i<lines_.size(); ++i ) {
 		if( lines_[i].isImage_ ) {
-			Estage stage=FirstSpace;
+			Stage stage=FirstSpace;
 			int yEndOfDescription=0;
 			int c=0;
 
@@ -222,7 +222,7 @@ void CscannedPage::connectDescriptionsToImages(CstatsPack stats) {
 	}
 	for( int i=0; i<lines_.size(); ++i ) {
 		if( lines_[i].toDivide_ ) {
-			QVector< CscannedLine > newLines = lines_[i].collapseLine( image, stats );
+			QVector< ScannedLine > newLines = lines_[i].collapseLine( image, stats );
 			if( ! newLines.empty() ) {
 				lines_[i]=newLines[0];
 				for( int j=1; j<newLines.size(); ++j ) {
@@ -240,7 +240,7 @@ void CscannedPage::connectDescriptionsToImages(CstatsPack stats) {
 	}
 }
 
-void CscannedPage::findParagraphs(CstatsPack stats) {
+void ScannedPage::findParagraphs(StatsPack stats) {
 	if( lines_.isEmpty() ) {
 		return;
 	}
@@ -297,7 +297,7 @@ void CscannedPage::findParagraphs(CstatsPack stats) {
 	}
 }
 
-void CscannedPage::findDividedWords() {
+void ScannedPage::findDividedWords() {
 	QImage image( fileMono_ );
 	for( int i=0; i<lines_.size(); ++i ) {
 		if( ! lines_[i].isImage_ ) {
@@ -306,7 +306,7 @@ void CscannedPage::findDividedWords() {
 	}
 }
 
-void CscannedPage::checkNumberHeader(CstatsPack stats, CstatsNumberHeader & numHead) {
+void ScannedPage::checkNumberHeader(StatsPack stats, StatsNumberHeader & numHead) {
 	if( lines_.isEmpty() ) {
 		return;
 	}
@@ -322,7 +322,7 @@ void CscannedPage::checkNumberHeader(CstatsPack stats, CstatsNumberHeader & numH
 	}
 }
 
-void CscannedPage::setNumberHeader(CstatsPack stats, CscannedPage::EpageNumber numberPosition, bool header) {
+void ScannedPage::setNumberHeader(StatsPack stats, ScannedPage::PageNumber numberPosition, bool header) {
 	if( lines_.isEmpty() ) {
 		return;
 	}
@@ -341,7 +341,7 @@ void CscannedPage::setNumberHeader(CstatsPack stats, CscannedPage::EpageNumber n
 	}
 }
 
-void CscannedPage::printDEbugImages(CstatsPack stats) {
+void ScannedPage::printDEbugImages(StatsPack stats) {
 	QImage image( fileMono_ );
 
 	image=image.convertToFormat( QImage::Format_RGB32 );
@@ -400,7 +400,7 @@ void CscannedPage::printDEbugImages(CstatsPack stats) {
 	image.save( fileMono_ + ".DE.png" , "PNG" );
 }
 
-void CscannedPage::getNumHead(CstatsPack stats, CprintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor) {
+void ScannedPage::getNumHead(StatsPack stats, PrintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor) {
 	numHead.clear();
 	QImage imageMono( fileMono_ );
 	QImage imageColor( fileColor_ );
@@ -412,7 +412,7 @@ void CscannedPage::getNumHead(CstatsPack stats, CprintedLine & numHead, double s
 	}
 }
 
-bool CscannedPage::getParagraph(CstatsPack stats, CprintedLine & paragraph, double scalingRatio, int maxWordLength, bool fullColor) {
+bool ScannedPage::getParagraph(StatsPack stats, PrintedLine & paragraph, double scalingRatio, int maxWordLength, bool fullColor) {
 	if( lines_.isEmpty() ) {
 		return false;
 	}
@@ -453,6 +453,6 @@ bool CscannedPage::getParagraph(CstatsPack stats, CprintedLine & paragraph, doub
 	return false;
 }
 
-void CscannedPage::removeMonoImage() {
+void ScannedPage::removeMonoImage() {
 	QFile::remove( fileMono_ );
 }

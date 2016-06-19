@@ -22,47 +22,47 @@
 #include <QImage>
 #include <QFile>
 
-class CscannedPage {
+class ScannedPage {
 public:
-	enum EpageNumber { None, Top, Bottom };
-	CscannedPage();
-	CscannedPage( QString fileMono, QString fileColor );
+	enum PageNumber { None, Top, Bottom };
+	ScannedPage();
+	ScannedPage( QString fileMono, QString fileColor );
 	/*
 	 *Pierwszy etap przetwarzania: podział na linie
 	 */
-	void getLinesAndHeights( Cstats & stats );
+	void getLinesAndHeights( Stats & stats );
 	/*
 	 *Drugi etap: dołączenie odciętych kropek
 	 */
-	void reConnectDots( CstatsPack stats );
+	void reConnectDots( StatsPack stats );
 	/*
 	 *Trzeci etap: zbyt wysokie linie będą rozbite
 	 */
-	void trimDivideLines( CstatsPack stats );
+	void trimDivideLines( StatsPack stats );
 
-	void connectDescriptionsToImages( CstatsPack stats );
+	void connectDescriptionsToImages( StatsPack stats );
 
-	void findParagraphs( CstatsPack stats );
+	void findParagraphs( StatsPack stats );
 
 	void findDividedWords();
 
-	void checkNumberHeader( CstatsPack stats, CstatsNumberHeader & numHead );
+	void checkNumberHeader( StatsPack stats, StatsNumberHeader & numHead );
 
-	void setNumberHeader( CstatsPack stats, EpageNumber number, bool header_ );
+	void setNumberHeader( StatsPack stats, PageNumber number, bool header_ );
 
-	void printDEbugImages( CstatsPack stats );
+	void printDEbugImages( StatsPack stats );
 
-	void getNumHead(CstatsPack stats, CprintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor=false );
-	bool getParagraph(CstatsPack stats, CprintedLine & paragraph, double scalingRatio, int maxWordLength, bool fullColor=false );//false==page completed
+	void getNumHead(StatsPack stats, PrintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor=false );
+	bool getParagraph(StatsPack stats, PrintedLine & paragraph, double scalingRatio, int maxWordLength, bool fullColor=false );//false==page completed
 
 	void removeMonoImage();
 protected:
 	QString fileMono_;
 	QString fileColor_;
-	QVector < CscannedLine > lines_;
+	QVector < ScannedLine > lines_;
 	int processedLine_;
-	CscannedLine header_;
-	CscannedLine pageNumber_;
+	ScannedLine header_;
+	ScannedLine pageNumber_;
 
 
 };

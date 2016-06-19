@@ -19,17 +19,17 @@
 #include "scanneddocument.hpp"
 #include "printedline.hpp"
 
-CscannedDocument::CscannedDocument() {
+ScannedDocument::ScannedDocument() {
 	;//NOOP
 }
 
-CscannedDocument::CscannedDocument(QString srcDir , QString destDir, bool * work, bool DEbugState):
+ScannedDocument::ScannedDocument(QString srcDir , QString destDir, bool * work, bool DEbugState):
 	srcDir_( srcDir ), destDir_( destDir ), work_(work), DEbugState_( DEbugState ),
-	number_(CscannedPage::None), header_(false) { //logic about headers
+	number_(ScannedPage::None), header_(false) { //logic about headers
 	;//NOOP
 }
 
-CscannedDocument::~CscannedDocument() {
+ScannedDocument::~ScannedDocument() {
 	if( DEbugState_ == false ) {
 		for( int i=0; i<pages_.size(); ++i ) {
 			pages_[i].removeMonoImage();
@@ -37,7 +37,7 @@ CscannedDocument::~CscannedDocument() {
 	}
 }
 
-int CscannedDocument::loadPages(int treshold) {
+int ScannedDocument::loadPages(int treshold) {
 	QDir dir(srcDir_);
 	QStringList filesInDir=dir.entryList(
 					  QDir::Files | QDir::NoDotAndDotDot,
@@ -72,21 +72,21 @@ int CscannedDocument::loadPages(int treshold) {
 		}
 		imageMono.save( fileMono, "PNG" );
 
-		CscannedPage page( fileMono, fileColor );
+		ScannedPage page( fileMono, fileColor );
 		pages_.push_back( page );
 	}
 
 	return pages_.size();
 }
 
-void CscannedDocument::findWords(bool comicMode, bool findDividedWords) {
+void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	if( ! (*work_) ) {
 		return;
 	}
 	newProgressBarValue( Cconsts::Progress::FindDelay, tr("finding words"), Cconsts::Progress::FindNumber, Cconsts::Progress::TotalNumber );
 
 	for( int i=0; i<pages_.size(); ++i ) {
-		CscannedPage & page(pages_[i]);
+		ScannedPage & page(pages_[i]);
 
 		page.getLinesAndHeights( lineStats_ );
 	}
@@ -96,10 +96,10 @@ void CscannedDocument::findWords(bool comicMode, bool findDividedWords) {
 		lineStats_.setComicMode();
 	}
 
-	const CstatsPack & stats=lineStats_.getStats();
-	CstatsNumberHeader numHead;
+	const StatsPack & stats=lineStats_.getStats();
+	StatsNumberHeader numHead;
 	for( int i=0; i<pages_.size(); ++i ) {
-		CscannedPage & page=pages_[i];
+		ScannedPage & page=pages_[i];
 
 		newProgressBarValue( i*Cconsts::Progress::FindPercent/pages_.size()+Cconsts::Progress::FindDelay );
 		if( ! (*work_) ) {
@@ -119,21 +119,21 @@ void CscannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	if( numHead.header_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
 		header_=true;
 		if( numHead.numberBottom_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
-			number_=CscannedPage::Bottom;
+			number_=ScannedPage::Bottom;
 		}
 	} else if( numHead.numberTop_ >= numHead.numberBottom_ ) {
 		if( numHead.numberTop_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
-			number_=CscannedPage::Top;
+			number_=ScannedPage::Top;
 		}
 	} else {
 		if( numHead.numberBottom_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
-			number_=CscannedPage::Bottom;
+			number_=ScannedPage::Bottom;
 		}
 	}
 
 
 	for( int i=0; i<pages_.size(); ++i ) {
-		CscannedPage & page=pages_[i];
+		ScannedPage & page=pages_[i];
 
 		page.setNumberHeader( stats, number_, header_ );
 
@@ -143,15 +143,15 @@ void CscannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	}
 }
 
-int CscannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix) {
+int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix) {
 	if( ! (*work_) ) {
 		return 0;
 	}
 	newProgressBarValue( Cconsts::Progress::PrintDelay, tr("generating images"), Cconsts::Progress::PrintNumber, Cconsts::Progress::TotalNumber );
 
-	CprintedLine paragraph;
-	CprintedLine numHead;
-	const CstatsPack & stats=lineStats_.getStats();
+	PrintedLine paragraph;
+	PrintedLine numHead;
+	const StatsPack & stats=lineStats_.getStats();
 	int number=1; //0 for titlepage
 	double scalingRatio=(double)fontHeight/(double)stats.height_;
 	if( noUpscalling && scalingRatio > 1 ) {
@@ -159,12 +159,12 @@ int CscannedDocument::print(int width, int height, int margin, int fontHeight, b
 		fontHeight=stats.height_;
 	}
 	int maxWordLength=Cconsts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
-	CprintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, DEbugState_ );
+	PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, DEbugState_ );
 
 	double numTocStep=(double)pages_.size()/destPage.numTocItems();
 	double numTocCurrentStep=numTocStep;
-	QVector<QPair<QPair<int, int >, CprintedLine> > toc;
-	QPair<QPair<int, int >, CprintedLine> tocItem;
+	QVector<QPair<QPair<int, int >, PrintedLine> > toc;
+	QPair<QPair<int, int >, PrintedLine> tocItem;
 
 	if( ! comicMode ) {
 		pages_[0].getNumHead( stats, numHead, scalingRatio, maxWordLength, fullColor );
@@ -177,9 +177,9 @@ int CscannedDocument::print(int width, int height, int margin, int fontHeight, b
 			return 0;
 		}
 
-		CscannedPage & srcPage=pages_[i];
+		ScannedPage & srcPage=pages_[i];
 
-		if( number_!=CscannedPage::None || header_!=false ) {
+		if( number_!=ScannedPage::None || header_!=false ) {
 			srcPage.getNumHead( stats, numHead, scalingRatio, maxWordLength, fullColor );
 		}
 
@@ -197,7 +197,7 @@ int CscannedDocument::print(int width, int height, int margin, int fontHeight, b
 				destPage.addNumberHeader( numHead, i );
 
 				if( numTocCurrentStep < i ) {
-					if( number_!=CscannedPage::None || header_!=false ) {
+					if( number_!=ScannedPage::None || header_!=false ) {
 						if( numHead.size() > 0 ) {
 							tocItem.first.first=number+1;
 							tocItem.second=numHead;
