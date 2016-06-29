@@ -133,7 +133,7 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	}
 }
 
-int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix) {
+int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, bool equalizeHistogram ) {
 	if( ! (*work_) ) {
 		return 0;
 	}
@@ -149,7 +149,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 		fontHeight=stats.height_;
 	}
 	int maxWordLength=Consts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
-	PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, DEbugState_ );
+    PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, equalizeHistogram, DEbugState_ );
 
 	double numTocStep=(double)pages_.size()/destPage.numTocItems();
 	double numTocCurrentStep=numTocStep;

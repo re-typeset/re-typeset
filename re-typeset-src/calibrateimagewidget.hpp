@@ -18,42 +18,47 @@
 // You should have received a copy of the  GNU  General  Public  License along
 // with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "variableparameter.hpp"
-#include "QDebug"
+#ifndef CALIBRATEIMAGEWIDGET_H
+#define CALIBRATEIMAGEWIDGET_H
 
-VariableParameter::VariableParameter()
-	: spinBox_(Q_NULLPTR)
+#include <QWidget>
+#include <QPaintEvent>
+#include <QImage>
+
+class CalibrateImageWidget : public QWidget
 {
-	//NOOP
-}
+    Q_OBJECT
+public:
+    explicit CalibrateImageWidget(QWidget *parent = 0);
 
-void VariableParameter::addToFormLayout(QFormLayout * layout)
-{
-	QString afterName=":";
-    layout->addRow(name_+afterName, spinBox_);
-}
+    void setImage(QImage *image); 
 
-void VariableParameter::configure(QFormLayout * layout, QString name, double defaultVal, QString suffix, double minVal, double maxVal, QString description)
-{
-	QString preSuffix=" × ";
+    void setSecondWidget(CalibrateImageWidget *secondWidget);
 
-	const int Decimals = 2;
-	const double Step = 0.01;
 
-	spinBox_ = new QDoubleSpinBox();
-	name_=name;
-	defaultVal_=defaultVal;
-	spinBox_->setValue(defaultVal_);
-	spinBox_->setMinimum(minVal);
-	spinBox_->setMaximum(maxVal);
-	spinBox_->setSuffix(preSuffix + suffix);
-	spinBox_->setDecimals(Decimals);
-	spinBox_->setSingleStep(Step);
-	description_=description;
-	addToFormLayout(layout);
-}
 
-VariableParameter::operator double()
-{
-	return spinBox_->value();
-}
+signals:
+
+public slots:
+    void setZoomNormal();
+    void setZoomFit();
+
+private:
+    void paintEvent(QPaintEvent * e);
+    void wheelEvent(QWheelEvent * e);
+    void mousePressEvent(QMouseEvent * e);
+    void mouseMoveEvent(QMouseEvent * e);
+    void mouseReleaseEvent(QMouseEvent * e);
+
+    QImage * image_;
+    int imageZoom_;
+    QPoint imageCorner_;
+    QPoint oldImageCorner_;
+    QPoint mousePressPoint_;
+    CalibrateImageWidget * secondWidget_;
+
+    double realZoom(double zoom);
+    double reverseZoom(double realZoom);
+};
+
+#endif // CALIBRATEIMAGEWIDGET_H

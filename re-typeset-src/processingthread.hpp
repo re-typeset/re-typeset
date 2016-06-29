@@ -27,6 +27,7 @@ public:
 	bool fullColor;
 	bool justify;
 	bool rotateImages;
+    bool equalizeHistogram;
 	QString fileNamePrefix;
 	int status;
 	bool work;

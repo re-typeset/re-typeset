@@ -517,6 +517,22 @@
       <string>Calibrate Algorithm</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="optionsEqualizeHistogram">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Equalize images' histogram</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="outFiles">
     <property name="geometry">

@@ -18,42 +18,20 @@
 // You should have received a copy of the  GNU  General  Public  License along
 // with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "variableparameter.hpp"
-#include "QDebug"
+#ifndef EXTENDEDIMAGE_H
+#define EXTENDEDIMAGE_H
+#include <QImage>
 
-VariableParameter::VariableParameter()
-	: spinBox_(Q_NULLPTR)
+class ExtendedImage : public QImage
 {
-	//NOOP
-}
+public:
+    ExtendedImage();
+    ExtendedImage(int width, int height, Format format);
+    ExtendedImage(const QString & fileName, const char * format = 0);
+    ExtendedImage(const QImage & image);
 
-void VariableParameter::addToFormLayout(QFormLayout * layout)
-{
-	QString afterName=":";
-    layout->addRow(name_+afterName, spinBox_);
-}
+    ExtendedImage convertToMonoImage(int treshold);
+    ExtendedImage histogramEqualization();
+};
 
-void VariableParameter::configure(QFormLayout * layout, QString name, double defaultVal, QString suffix, double minVal, double maxVal, QString description)
-{
-	QString preSuffix=" × ";
-
-	const int Decimals = 2;
-	const double Step = 0.01;
-
-	spinBox_ = new QDoubleSpinBox();
-	name_=name;
-	defaultVal_=defaultVal;
-	spinBox_->setValue(defaultVal_);
-	spinBox_->setMinimum(minVal);
-	spinBox_->setMaximum(maxVal);
-	spinBox_->setSuffix(preSuffix + suffix);
-	spinBox_->setDecimals(Decimals);
-	spinBox_->setSingleStep(Step);
-	description_=description;
-	addToFormLayout(layout);
-}
-
-VariableParameter::operator double()
-{
-	return spinBox_->value();
-}
+#endif // EXTENDEDIMAGE_H

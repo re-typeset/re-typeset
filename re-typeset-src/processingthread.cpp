@@ -19,6 +19,6 @@ void ProcessingThread::run() {
 	doc.findWords( comicMode, findDividedWords  );
 
 	status=doc.print( width, height, margin, fontHeight, hardMargins, noUpscalling, fullColor,
-						   justify, rotateImages, comicMode, fileNamePrefix );
+                           justify, rotateImages, comicMode, fileNamePrefix, equalizeHistogram );
 }
 

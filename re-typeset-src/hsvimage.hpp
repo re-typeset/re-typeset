@@ -18,42 +18,42 @@
 // You should have received a copy of the  GNU  General  Public  License along
 // with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "variableparameter.hpp"
-#include "QDebug"
+#ifndef HSVIMAGE_H
+#define HSVIMAGE_H
 
-VariableParameter::VariableParameter()
-	: spinBox_(Q_NULLPTR)
+#include <QVector>
+#include <QImage>
+
+
+
+class HSVImage
 {
-	//NOOP
-}
+public:
+    HSVImage();
+    HSVImage(const QImage &img);
 
-void VariableParameter::addToFormLayout(QFormLayout * layout)
-{
-	QString afterName=":";
-    layout->addRow(name_+afterName, spinBox_);
-}
+    class HSV
+    {
+    public:
+        HSV();
+        HSV( QRgb pixel );
+        QRgb toQRgb() const;
 
-void VariableParameter::configure(QFormLayout * layout, QString name, double defaultVal, QString suffix, double minVal, double maxVal, QString description)
-{
-	QString preSuffix=" × ";
+        qint16 hue;
+        quint8 saturation;
+        quint8 value;
+    };
 
-	const int Decimals = 2;
-	const double Step = 0.01;
+    void setPixel(int x, int y, HSV hsv);
+    HSV getPixel(int x, int y) const;
+    void equalizeHistogram();
+    QImage toQImage() const;
 
-	spinBox_ = new QDoubleSpinBox();
-	name_=name;
-	defaultVal_=defaultVal;
-	spinBox_->setValue(defaultVal_);
-	spinBox_->setMinimum(minVal);
-	spinBox_->setMaximum(maxVal);
-	spinBox_->setSuffix(preSuffix + suffix);
-	spinBox_->setDecimals(Decimals);
-	spinBox_->setSingleStep(Step);
-	description_=description;
-	addToFormLayout(layout);
-}
+private:
+    int width_;
+    int height_;
+    QVector<HSV> data_;
+    int xy2index(int x, int y) const;
+};
 
-VariableParameter::operator double()
-{
-	return spinBox_->value();
-}
+#endif // HSVIMAGE_H

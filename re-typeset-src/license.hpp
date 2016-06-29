@@ -1,7 +1,9 @@
+// This is not The Greatest Code in the World, no! This is just a tribute!
+//
 // Re-Typeset program for converting scanned documents to smaller size of page
 // without changing text size.
 //
-// Copyright (C) 2013-2015 Piotr Mika (piotr.mt.mika@gmail.com).
+// Copyright (C) 2013-2016 Piotr Mika (piotr.mt.mika@gmail.com).
 // Copyright (C)      2015 Marcin Garbiak (marcin.garbiak@gmail.com).
 //
 // This  program is free software:  you can  redistribute it and/or  modify it
@@ -17,19 +19,17 @@
 // You should have received a copy of the  GNU  General  Public  License along
 // with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 #ifndef LICENSE_HPP
 #define LICENSE_HPP
 
 #include <QString>
 
-class License{
-public:
-	static QString header();
-	static QString body();
-	static QString license();
+namespace License{
+    QString header();
+    QString body();
+    QString license();
 
-private:
-	License();
-};
+}
 
 #endif // LICENSE_HPP

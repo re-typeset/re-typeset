@@ -33,7 +33,7 @@ public:
 	PrintedPage();
 	virtual ~PrintedPage();
 	PrintedPage( int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-				  bool comicMode, bool DEbugState=false );
+                  bool comicMode, bool equalizeHistogram, bool DEbugState=false );
 
 	void addNumberHeader( PrintedLine & numHead, int srcPageNum );
 
@@ -64,6 +64,7 @@ protected:
 	bool isDividedWord_;
 	bool justify_;
 	bool rotateImages_;
+    bool equalizeHistogram_;
 	bool disableProgressBar;
 	int srcPageNum_;
 

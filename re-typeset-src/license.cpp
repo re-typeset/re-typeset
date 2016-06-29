@@ -1,8 +1,9 @@
+// This is not The Greatest Code in the World, no! This is just a tribute!
+//
 // Re-Typeset program for converting scanned documents to smaller size of page
 // without changing text size.
 //
-// Copyright (C) 2013-2015 Piotr Mika (piotr.mt.mika@gmail.com).
-// Copyright (C)      2015 Marcin Garbiak (marcin.garbiak@gmail.com).
+// Copyright (C) 2013-2016 Piotr Mika (piotr.mt.mika@gmail.com).
 //
 // This  program is free software:  you can  redistribute it and/or  modify it
 // under the terms of the  GNU General Public License as published by the Free

@@ -1,3 +1,5 @@
+// This is not The Greatest Code in the World, no! This is just a tribute!
+//
 // Re-Typeset program for converting scanned documents to smaller size of page
 // without changing text size.
 //
@@ -188,7 +190,8 @@ void MainWindow::on_outStartButton_clicked() {
 			processingThread_.fullColor=ui->optionsFullColorOutput->isChecked();
 			processingThread_.justify=ui->optionsJustify->isChecked();
 			processingThread_.rotateImages=ui->optionsRotateImages->isChecked();
-			processingThread_.comicMode=ui->optionsComicMode->isChecked();
+            processingThread_.equalizeHistogram=ui->optionsEqualizeHistogram->isChecked();
+            processingThread_.comicMode=ui->optionsComicMode->isChecked();
 			processingThread_.fileNamePrefix=ui->outFilesPrefix->text();
 
 			processingThread_.work=true;
@@ -197,7 +200,6 @@ void MainWindow::on_outStartButton_clicked() {
 			connect( &processingThread_, SIGNAL( finished() ), this, SLOT( processingFinished() ) );
 
 			processingThread_.start();
-
 
 		} else {
 			QMessageBox::critical( this, tr("Error, wrong directories"), tr("Directories paths set improperly.") );

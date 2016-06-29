@@ -40,7 +40,7 @@ public:
 	void findWords( bool comicMode=false, bool findDividedWords=true );
 
 	int print( int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling,
-			   bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix );
+               bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, bool equalizeHistogram );
 
     static QImage convertToMonoImage(const QImage & imageColor , int treshold);
 signals:

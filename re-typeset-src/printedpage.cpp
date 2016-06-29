@@ -20,6 +20,7 @@
 #include "consts.hpp"
 #include "version.hpp"
 #include <QPainter>
+#include "extendedimage.hpp"
 
 PrintedPage::PrintedPage() {
 	;//NOOP
@@ -32,8 +33,8 @@ PrintedPage::~PrintedPage() {
 }
 
 PrintedPage::PrintedPage(int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-						   bool comicMode, bool DEbugState): margin_( margin ), isDividedWord_(false), justify_(justify),
-	rotateImages_(rotateImages), outLastPage_(-1), comicMode_(comicMode), DEbugState_( DEbugState ) {
+						   bool comicMode, bool equalizeHistogram, bool DEbugState): margin_( margin ), isDividedWord_(false), justify_(justify),
+    rotateImages_(rotateImages), equalizeHistogram_(equalizeHistogram), outLastPage_(-1), comicMode_(comicMode), DEbugState_( DEbugState ) {
 	image_ = new QImage( width, height, QImage::Format_RGB32 );
 	image_->fill( Qt::white );
 	lineHeight_=Consts::LineHeightFromTextHeight( fontHeight );
@@ -82,6 +83,10 @@ bool PrintedPage::printImagesFromQueue(bool final) {//true -- create new page
 			if( imageQueue_.first().height() > image_->height() ) {
 				imageQueue_.first()=imageQueue_.first().scaledToHeight( image_->height(), Qt::SmoothTransformation );
 			}
+            if( equalizeHistogram_ ) {
+                ExtendedImage tmp(imageQueue_.first());
+                imageQueue_.first() = tmp.histogramEqualization();
+            }
 			image_->fill( Qt::white );
 			disableProgressBar=true;
 			int yDel=(image_->height()-imageQueue_.first().height())/2;
@@ -156,6 +161,10 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 				paragraph.first()=paragraph.first().scaledToWidth( image_->width(), Qt::SmoothTransformation );
 			}
 			if( ( ! comicMode_ ) && ( paragraph.first().height() + lineHeight_ + margin_ + cursorY <= image_->height() ) ) {
+                if( equalizeHistogram_ ) {
+                    ExtendedImage tmp(paragraph.first());
+                    paragraph.first() = tmp.histogramEqualization();
+                }
 				int del=(image_->width()-paragraph.first().width())/2;
 				cursorY+=lineHeight_;
 				writer.drawImage( del, cursorY, paragraph.first() );

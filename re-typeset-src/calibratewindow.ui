@@ -117,7 +117,7 @@
   <customwidget>
    <class>CalibrateImageWidget</class>
    <extends>QWidget</extends>
-   <header location="global">calibrateimagewidget.h</header>
+   <header location="global">calibrateimagewidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

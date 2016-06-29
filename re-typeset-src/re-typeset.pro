@@ -44,7 +44,9 @@ SOURCES  += main.cpp \
     processingthread.cpp \
     calibratewindow.cpp \
     variableparameter.cpp \
-    calibrateimagewidget.cpp
+    calibrateimagewidget.cpp \
+    extendedimage.cpp \
+    hsvimage.cpp
 
 HEADERS  += version.hpp \
     mainwindow.hpp \
@@ -61,7 +63,9 @@ HEADERS  += version.hpp \
     processingthread.hpp \
     calibratewindow.hpp \
     variableparameter.hpp \
-    calibrateimagewidget.h
+    calibrateimagewidget.hpp \
+    extendedimage.hpp \
+    hsvimage.hpp    
 
 FORMS  += mainwindow.ui \
     calibratewindow.ui
@@ -72,8 +76,8 @@ TRANSLATIONS  += lang/re-typeset_pl.ts \
 QMAKE_CXXFLAGS += -Wall
 
 
-CONFIG += staticlib
-CONFIG += c++11
+CONFIG += staticlib \
+    c++11
 
 #QTPLUGIN  += qtiff
 
