@@ -95,13 +95,13 @@ QVector<ScannedLine> ScannedLine::collapseLine(const QImage & image, StatsPack s
 		return out;
 	}
 
-	if( this->height() < Cconsts::MinHeightForFigureInMedian*stats.height_ ) {//line of normal height
+	if( this->height() < Consts::MinHeightForFigureInMedian*stats.height_ ) {//line of normal height
 		out.push_back( *this );
-	} else if( this->height() < Cconsts::AccidentiallyConnectedLines::MaxHeight( stats ) ) {
+	} else if( this->height() < Consts::AccidentiallyConnectedLines::MaxHeight( stats ) ) {
 		if( this->cutAccidentiallyConnectedLines( image, stats, out ) ) {//divided by 3
 			return out;
 		} else {//can be cutted vertically
-			if( this->height() > Cconsts::MinHeightForOneVerticalDiv( stats ) ) {//no protection of math formulas
+			if( this->height() > Consts::MinHeightForOneVerticalDiv( stats ) ) {//no protection of math formulas
 				this->preciseDivideVertical( image, stats, out, 2 );//div vert always run div hori
 			} else {
 				out.push_back( *this );//height < 2, don't cut
@@ -143,7 +143,7 @@ void ScannedLine::preciseDivideVertical(const QImage & image, StatsPack stats, Q
 				currentColumn.blockLeftPos_=x;
 			}
 		} else {
-			if( columnStarted && w > Cconsts::MinHorizontalSpaceInMedian*stats.height_ ) {//only whites - end of line
+			if( columnStarted && w > Consts::MinHorizontalSpaceInMedian*stats.height_ ) {//only whites - end of line
 				currentColumn.setRight( x-1 );
 				columnStarted=false;
 				w=0;
@@ -226,11 +226,11 @@ void ScannedLine::preciseDivideHorizontal(const QImage & image, StatsPack stats,
 
 
 	for( int i=0; i<lines.size(); ++i ) {
-		if( lines[i].height() < Cconsts::MinHeightForFigureInMedian*stats.height_ ) {//normal height
+		if( lines[i].height() < Consts::MinHeightForFigureInMedian*stats.height_ ) {//normal height
 			if( lines[i].trim( image ) ) {
 				out.push_back( lines[i] );
 			}
-		} else if( lines[i].height() < Cconsts::AccidentiallyConnectedLines::MaxHeight( stats ) ) {//line 3x
+		} else if( lines[i].height() < Consts::AccidentiallyConnectedLines::MaxHeight( stats ) ) {//line 3x
 			if( ! lines[i].cutAccidentiallyConnectedLines( image, stats, out ) ) {//can't divide for 3, maybe one horizontally if there was no try before
 				if( level > 0 ) {//NOTE maybe additional condition for dividing
 					lines[i].preciseDivideVertical( image, stats, out, 1 );
@@ -257,10 +257,10 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 	int dirt=0;
 
 	int x, endX;
-	for( x=this->left()+this->width()-1, endX=this->left()+this->width()-this->height()*Cconsts::DividedWord::MaxLength; x>endX; --x ) {
+	for( x=this->left()+this->width()-1, endX=this->left()+this->width()-this->height()*Consts::DividedWord::MaxLength; x>endX; --x ) {
 		int c=0;
 		for( int y=this->top(), endY=this->top()+this->height(); y<endY; ++y ) {
-			if( y < this->top()+this->height()*Cconsts::DividedWord::UpperGap ) {
+			if( y < this->top()+this->height()*Consts::DividedWord::UpperGap ) {
 				if( image.pixel( x, y ) == black ) {
 					if( dirt == 0 ) {
 						++dirt;
@@ -269,7 +269,7 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 						y=endY;
 					}
 				}
-			} else if( y <= this->top()+this->height()*(1-Cconsts::DividedWord::LowerGap) ) {
+			} else if( y <= this->top()+this->height()*(1-Consts::DividedWord::LowerGap) ) {
 				if( image.pixel( x, y ) == black ) {
 					++c;
 				}
@@ -284,13 +284,13 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 				}
 			}
 		}
-		if( c < 1 || c > this->height()*Cconsts::DividedWord::MaxHeight ) {
+		if( c < 1 || c > this->height()*Consts::DividedWord::MaxHeight ) {
 			endX=x+1;
 		}
 	}
 
 	int dx=this->left()+this->width()-1-x;
-	if( dx >= this->height()*Cconsts::DividedWord::MinLength && dx <= this->height()*Cconsts::DividedWord::MaxLength ) {
+	if( dx >= this->height()*Consts::DividedWord::MinLength && dx <= this->height()*Consts::DividedWord::MaxLength ) {
 		this->hasDividedWordAtEnd_=true;
 		this->setRight( x+1 );
 
@@ -316,7 +316,7 @@ void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, 
 	bool wordTooLong=false;
 
 	int begX=0;
-	int spaceX=Cconsts::MinHorizontalSpaceInMedian*stats.height_;
+	int spaceX=Consts::MinHorizontalSpaceInMedian*stats.height_;
 	int x, maxX, y, maxY;
 	int w=0;
 	for( x=this->left(), maxX=this->left()+this->width(); x<maxX; ++x ) {//for column
@@ -356,7 +356,7 @@ void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, 
 				}
 				if( wordTooLong ) {
 					QRgb white=QColor( 255, 255 ,255 ).rgb();
-					for( int xx=par.last().width()-1; xx>max( 0, par.last().width()-spaceX ); --xx ) {
+					for( int xx=par.last().width()-1; xx>qMax( 0, par.last().width()-spaceX ); --xx ) {
 						for( int yy=0; yy<par.last().height(); ++yy ) {
 							if( yy==par.last().height()/2 || yy==par.last().height()/2-1 ) {
 								par.last().setPixel( xx, yy, black );
@@ -366,7 +366,7 @@ void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, 
 						}
 					}
 					wordTooLong=false;
-					x=max( this->left(), x-3*spaceX );
+					x=qMax( this->left(), x-3*spaceX );
 				}
 			}
 		}
@@ -386,10 +386,10 @@ void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, 
 
 bool ScannedLine::cutAccidentiallyConnectedLines(const QImage & image, StatsPack stats, QVector<ScannedLine> & out) {
 
-	if( this->height() < ( (2*Cconsts::AccidentiallyConnectedLines::MaxNumberOfLines-1)*stats.height_
-						   + (2*Cconsts::AccidentiallyConnectedLines::MaxNumberOfLines-3)*stats.divToNextLine_ )/2 ) {//div by 2
+	if( this->height() < ( (2*Consts::AccidentiallyConnectedLines::MaxNumberOfLines-1)*stats.height_
+						   + (2*Consts::AccidentiallyConnectedLines::MaxNumberOfLines-3)*stats.divToNextLine_ )/2 ) {//div by 2
 
-		if( Cconsts::AccidentiallyConnectedLines::CanCut( stats,
+		if( Consts::AccidentiallyConnectedLines::CanCut( stats,
 														  this->blackPixelsInRow( image, this->top()+this->height()*1/4),
 														  this->blackPixelsInRow( image, this->top()+this->height()*2/4),
 														  this->blackPixelsInRow( image, this->top()+this->height()*3/4) ) ) {//can cut
@@ -407,7 +407,7 @@ bool ScannedLine::cutAccidentiallyConnectedLines(const QImage & image, StatsPack
 		}
 	} else {//div by 3
 
-		if( Cconsts::AccidentiallyConnectedLines::CanCut( stats,
+		if( Consts::AccidentiallyConnectedLines::CanCut( stats,
 														  this->blackPixelsInRow( image, this->top()+this->height()*1/6),
 														  this->blackPixelsInRow( image, this->top()+this->height()*2/6),
 														  this->blackPixelsInRow( image, this->top()+this->height()*3/6),

@@ -27,7 +27,11 @@
 
 #define DE qDebug()
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent)
+	: QMainWindow(parent)
+	, ui(new Ui::MainWindow)
+	, calibrate_(new CalibrateWindow(this))
+{
 	QFileDialog_ShowAllFiles=static_cast< QFileDialog::Option >( 0 ); //No '0' value in 'enum Option' in 'QFileDialog' class
 	ui->setupUi(this);
 
@@ -46,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	startText_=tr( "Start" );
 	stopText_=tr( "Stop" );
 	ui->outStartButton->setText( startText_ );
+
+    Consts::configure(calibrate_->getParametersFormLayout());
+    calibrate_->connectSpinBoxes();
 }
 
 MainWindow::~MainWindow() {
@@ -104,20 +111,22 @@ void MainWindow::on_srcDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
 	dir=changeFileToBasedir( dir );
-	ui->srcDir->setText( dir );
-	dir+=".out";
+    if( ! dir.isEmpty() ) {
+        ui->srcDir->setText( dir );
+        calibrate_->setDirPath( dir );
+        dir+=".out";
 
-	QFileInfo fi( ui->srcDir->text() );
-	if( QDir( dir ).exists() ) {
-		ui->destDir->setText( dir );
-		ui->destDirCreate->setText( tr( "Create directory: NAME.out" ) );
-		ui->destDirCreate->setEnabled( false );
-	} else {
-		ui->destDirCreate->setText( tr( "Create directory: \n``%1.out''" ).arg( fi.baseName() ) );
-		ui->destDirCreate->setEnabled( true );
-	}
-	ui->outFilesPrefix->setText( fi.baseName() );
-
+        QFileInfo fi( ui->srcDir->text() );
+        if( QDir( dir ).exists() ) {
+            ui->destDir->setText( dir );
+            ui->destDirCreate->setText( tr( "Create directory: NAME.out" ) );
+            ui->destDirCreate->setEnabled( false );
+        } else {
+            ui->destDirCreate->setText( tr( "Create directory: \n``%1.out''" ).arg( fi.baseName() ) );
+            ui->destDirCreate->setEnabled( true );
+        }
+        ui->outFilesPrefix->setText( fi.baseName() );
+    }
 }
 
 void MainWindow::on_destDirCreate_clicked() {
@@ -139,14 +148,17 @@ void MainWindow::on_destDirButton_clicked() {
 
 void MainWindow::on_treshSlider_sliderMoved(int position) {
 	ui->treshVal->setValue( position );
+    calibrate_->setTreshold( position );
 }
 
 void MainWindow::on_treshVal_valueChanged(int arg1) {
 	ui->treshSlider->setValue( arg1 );
+    calibrate_->setTreshold( arg1 );
 }
 
 void MainWindow::on_treshSlider_valueChanged(int value) {
 	ui->treshVal->setValue( value );
+    calibrate_->setTreshold( value );
 }
 
 
@@ -363,3 +375,9 @@ void MainWindow::slotLanguageChanged(QAction * action) {
 	}
 }
 //end MULTILANG
+
+void MainWindow::on_optionsCalibrateAlg_clicked()
+{
+	calibrate_->show();    
+    calibrate_->setZoomFit();
+}

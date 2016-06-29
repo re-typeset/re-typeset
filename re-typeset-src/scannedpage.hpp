@@ -31,6 +31,7 @@ public:
 	 *Pierwszy etap przetwarzania: podział na linie
 	 */
 	void getLinesAndHeights( Stats & stats );
+    void getLinesAndHeights( Stats & stats, const QImage & image );
 	/*
 	 *Drugi etap: dołączenie odciętych kropek
 	 */
@@ -39,18 +40,22 @@ public:
 	 *Trzeci etap: zbyt wysokie linie będą rozbite
 	 */
 	void trimDivideLines( StatsPack stats );
+    void trimDivideLines( StatsPack stats, const QImage & image );
 
 	void connectDescriptionsToImages( StatsPack stats );
+    void connectDescriptionsToImages( StatsPack stats, const QImage & image );
 
 	void findParagraphs( StatsPack stats );
 
 	void findDividedWords();
+    void findDividedWords( const QImage & image );
 
 	void checkNumberHeader( StatsPack stats, StatsNumberHeader & numHead );
 
 	void setNumberHeader( StatsPack stats, PageNumber number, bool header_ );
 
 	void printDEbugImages( StatsPack stats );
+    QImage printDEbugImages( StatsPack stats, const QImage & image );
 
 	void getNumHead(StatsPack stats, PrintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor=false );
 	bool getParagraph(StatsPack stats, PrintedLine & paragraph, double scalingRatio, int maxWordLength, bool fullColor=false );//false==page completed

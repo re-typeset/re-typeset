@@ -43,14 +43,14 @@ int ScannedDocument::loadPages(int treshold) {
 					  QDir::Files | QDir::NoDotAndDotDot,
 					  QDir::Name );
 
-	newProgressBarValue( 0, tr("loading images"), Cconsts::Progress::LoadNumber, Cconsts::Progress::TotalNumber );
+	newProgressBarValue( 0, tr("loading images"), Consts::Progress::LoadNumber, Consts::Progress::TotalNumber );
 	if( ! (*work_) ) {
 		return 0;
 	}
 
 	for( int i=0, size=filesInDir.size(); i<size; ++i ) {
 
-		newProgressBarValue( i*Cconsts::Progress::LoadPercent/size+Cconsts::Progress::LoadDelay );
+		newProgressBarValue( i*Consts::Progress::LoadPercent/size+Consts::Progress::LoadDelay );
 		if( ! (*work_) ) {
 			return 0;
 		}
@@ -58,18 +58,8 @@ int ScannedDocument::loadPages(int treshold) {
 		QString fileColor = srcDir_ + "/" + filesInDir[i];
 		QString fileMono = destDir_ + "/TMP_" + filesInDir[i] + ".png";
 		QImage imageColor( fileColor );
-		QImage imageMono( imageColor.size(), QImage::Format_Mono );
-		const uint white=0;
-		const uint black=1;
-		for( int x=0; x<imageColor.width(); ++x ) {
-			for( int y=0; y<imageColor.height(); ++y ) {
-				if( qGray( imageColor.pixel( x, y ) ) > treshold ) {
-					imageMono.setPixel( x, y, black );
-				} else {
-					imageMono.setPixel( x, y, white );
-				}
-			}
-		}
+        QImage imageMono = convertToMonoImage( imageColor, treshold );
+
 		imageMono.save( fileMono, "PNG" );
 
 		ScannedPage page( fileMono, fileColor );
@@ -83,7 +73,7 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	if( ! (*work_) ) {
 		return;
 	}
-	newProgressBarValue( Cconsts::Progress::FindDelay, tr("finding words"), Cconsts::Progress::FindNumber, Cconsts::Progress::TotalNumber );
+	newProgressBarValue( Consts::Progress::FindDelay, tr("finding words"), Consts::Progress::FindNumber, Consts::Progress::TotalNumber );
 
 	for( int i=0; i<pages_.size(); ++i ) {
 		ScannedPage & page(pages_[i]);
@@ -101,7 +91,7 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	for( int i=0; i<pages_.size(); ++i ) {
 		ScannedPage & page=pages_[i];
 
-		newProgressBarValue( i*Cconsts::Progress::FindPercent/pages_.size()+Cconsts::Progress::FindDelay );
+		newProgressBarValue( i*Consts::Progress::FindPercent/pages_.size()+Consts::Progress::FindDelay );
 		if( ! (*work_) ) {
 			return;
 		}
@@ -116,17 +106,17 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 		page.checkNumberHeader( stats, numHead );
 	}
 
-	if( numHead.header_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
+	if( numHead.header_ >= pages_.size()*Consts::NumberHeader::CorrectToAllCoefficient ) {
 		header_=true;
-		if( numHead.numberBottom_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
+		if( numHead.numberBottom_ >= pages_.size()*Consts::NumberHeader::CorrectToAllCoefficient ) {
 			number_=ScannedPage::Bottom;
 		}
 	} else if( numHead.numberTop_ >= numHead.numberBottom_ ) {
-		if( numHead.numberTop_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
+		if( numHead.numberTop_ >= pages_.size()*Consts::NumberHeader::CorrectToAllCoefficient ) {
 			number_=ScannedPage::Top;
 		}
 	} else {
-		if( numHead.numberBottom_ >= pages_.size()*Cconsts::NumberHeader::CorrectToAllCoefficient ) {
+		if( numHead.numberBottom_ >= pages_.size()*Consts::NumberHeader::CorrectToAllCoefficient ) {
 			number_=ScannedPage::Bottom;
 		}
 	}
@@ -147,7 +137,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 	if( ! (*work_) ) {
 		return 0;
 	}
-	newProgressBarValue( Cconsts::Progress::PrintDelay, tr("generating images"), Cconsts::Progress::PrintNumber, Cconsts::Progress::TotalNumber );
+	newProgressBarValue( Consts::Progress::PrintDelay, tr("generating images"), Consts::Progress::PrintNumber, Consts::Progress::TotalNumber );
 
 	PrintedLine paragraph;
 	PrintedLine numHead;
@@ -158,7 +148,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 		scalingRatio=1;
 		fontHeight=stats.height_;
 	}
-	int maxWordLength=Cconsts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
+	int maxWordLength=Consts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
 	PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, DEbugState_ );
 
 	double numTocStep=(double)pages_.size()/destPage.numTocItems();
@@ -172,7 +162,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 	destPage.addNumberHeader( numHead, 0 );
 	int i;
 	for( i=0; i<pages_.size(); ++i ) {
-		newProgressBarValue( i*Cconsts::Progress::PrintPercent/pages_.size()+Cconsts::Progress::PrintDelay );
+		newProgressBarValue( i*Consts::Progress::PrintPercent/pages_.size()+Consts::Progress::PrintDelay );
 		if( ! (*work_) ) {
 			return 0;
 		}
@@ -185,7 +175,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 
 		while( srcPage.getParagraph( stats, paragraph, scalingRatio, maxWordLength, fullColor ) ) {//false==page completed
 
-			newProgressBarValue( i*Cconsts::Progress::PrintPercent/pages_.size()+Cconsts::Progress::PrintDelay );
+			newProgressBarValue( i*Consts::Progress::PrintPercent/pages_.size()+Consts::Progress::PrintDelay );
 			if( ! (*work_) ) {
 				return 0;
 			}
@@ -264,12 +254,29 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 	}
 
 	if( ! comicMode ) {
-		newProgressBarValue( Cconsts::Progress::ProgBarDelay, tr("generating pages' progress bars"), Cconsts::Progress::ProgBarNumber, Cconsts::Progress::TotalNumber );
+		newProgressBarValue( Consts::Progress::ProgBarDelay, tr("generating pages' progress bars"), Consts::Progress::ProgBarNumber, Consts::Progress::TotalNumber );
 		destPage.addProgressBarsForAllPages();
 	}
 
 	destPage.createTitlePage( toc );
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_001.png", hardMargins );
 
-	return number-1;
+    return number-1;
+}
+
+QImage ScannedDocument::convertToMonoImage(const QImage &imageColor, int treshold)
+{
+    QImage imageMono( imageColor.size(), QImage::Format_Mono );
+    const uint white=0;
+    const uint black=1;
+    for( int x=0; x<imageColor.width(); ++x ) {
+        for( int y=0; y<imageColor.height(); ++y ) {
+            if( qGray( imageColor.pixel( x, y ) ) > treshold ) {
+                imageMono.setPixel( x, y, black );
+            } else {
+                imageMono.setPixel( x, y, white );
+            }
+        }
+    }
+    return imageMono;
 }

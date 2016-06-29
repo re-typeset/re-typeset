@@ -42,10 +42,13 @@ public:
 	int print( int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling,
 			   bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix );
 
+    static QImage convertToMonoImage(const QImage & imageColor , int treshold);
 signals:
 	void newProgressBarValue(int percent, QString name="", int n=0, int of=0);
 
 protected:
+
+
 	QString srcDir_;
 	QString destDir_;
 	Stats lineStats_;

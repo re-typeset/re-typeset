@@ -21,50 +21,36 @@
 #include <QDebug>
 #include <QFont>
 #include "stats.hpp"
+#include "variableparameter.hpp"
 #define DE qDebug()
 
 
+namespace Consts {
+void configure(QFormLayout * l);
 
-int min( int a, int b);
 
-int max( int a, int b);
-
-int round( double a );
-
-class Consts {
-public:
-
-	/*
-	 * linia o takiej zawartości czarnych punktów jest
-	 * uznawana za białą.
-	 * Ogonek przy 200 dpi ma 2 px grubości, a słowo
-	 * pające 6 liter ma 110 px długości.
-	 * Na 1000 px 3 ogonki, 2 będą usunięte
-	 */
-	//static const double MaxBlackPointsInLine = 0.5/100;
-
-	/*
+/*
 	 * minimalna wysokośc lini, aby była ona uznana za tekstową,
 	 * w ułamku wartości mediany
 	 */
-	static const double MinHeightForLineInMedian = 0.33;
+extern VariableParameter MinHeightForLineInMedian;
 
-	/*
+/*
 	 * podział na kolumny i słowa
 	 */
-	static const double MinHorizontalSpaceInMedian = 1.0/5;//1.0/4;
+extern VariableParameter MinHorizontalSpaceInMedian;
 
-	/*
+/*
 	 * doklejanie odciętych kropek,
 	 * linia zbyt wąska + linia == wysokość nie większa niż
 	 */
-	static const double MaxHeightForJoinedLineInHerHeight = 1.4;
+static constexpr double MaxHeightForJoinedLineInHerHeight=1.4;
 
 
-	static int MinHeightForOneVerticalDiv( StatsPack stats );
+int MinHeightForOneVerticalDiv( StatsPack stats );
 
 
-	/*
+/*
 	 * linia o większej wysokości niż 5*med(linia.wys)
 	 * powinna być pocięta w pionie, a kazdy z elementów
 	 * powinien być dalej dzielony na linie.
@@ -74,119 +60,99 @@ public:
 	 * Uwaga: jeśli jest podział A|B|C to ilość lini
 	 * w sąsiadujących musi być różna
 	 */
-	static const double MinHeightForFigureInMedian = 2;
+extern VariableParameter MinHeightForFigureInMedian;
 
-	static const double MinParagraphIndentInMedian=3.0/4;
-	static const double MaxParagraphIndentInMedian=3.0;
-
-
-	static int LineHeightFromTextHeight( int h );
-	static int TextHeightFromLineHeight( int h );
-
-	static const double MinHeightForEmptyLineInSpaceToNext=3.0;
-
-	static const double MaxWordLengthInOutPageWidth=0.9;
+extern VariableParameter MinParagraphIndentInMedian;
+extern VariableParameter MaxParagraphIndentInMedian;
 
 
+int LineHeightFromTextHeight( int h );
+int TextHeightFromLineHeight( int h );
 
-	/*
+extern VariableParameter MinHeightForEmptyLineInSpaceToNext;
+
+static constexpr double MaxWordLengthInOutPageWidth=0.9;
+
+
+
+/*
 	 * połączone przypadkowo linie np. przez kropki na obrazie
 	 * lub zbyt długie ogonki, rozcinane niepełnym cięciem
 	 * CscannedLine::cutAccidentiallyConnectedLines()
 	 */
-	class AccidentiallyConnectedLines {
-	public:
-		/*
+namespace AccidentiallyConnectedLines {
+/*
 		 * z tej wartości wyliczamy max grubość połączenia lini
 		 */
-		static const double WeightOfConnectionInMedian = 0.5;//1.0; //1.0/4;
-		/*
+static constexpr double WeightOfConnectionInMedian = 0.5;//1.0; //1.0/4;
+/*
 		 * maksymalna wysokość bloku, który może byc rozbijany przez
 		 * CscannedLine::cutAccidentiallyConnectedLines()
 		 */
-		static int MaxHeight( StatsPack stats );
+int MaxHeight( StatsPack stats );
 
-		static bool CanCut( StatsPack stats, int textWeight1, int spaceWeight1, int textWeight2, int spaceWeight2=-1, int textWeight3=999999 );
+bool CanCut( StatsPack stats, int textWeight1, int spaceWeight1, int textWeight2, int spaceWeight2=-1, int textWeight3=999999 );
 
-		static const int TextToSpaceCoefficient = 10;
+static constexpr int TextToSpaceCoefficient = 10;
 
-		static const int MaxNumberOfLines = 3;
-	private:
-		AccidentiallyConnectedLines();
-	};
+static constexpr int MaxNumberOfLines = 3;
+}
+namespace DividedWord {
+static constexpr double UpperGap=11.0/31;//10.0/31//11.0/31
+static constexpr double LowerGap=9.0/31;
+static constexpr double MaxHeight=0.2;//0.15;
+static constexpr double MinLength=1.0/6;
+static constexpr double MaxLength=1.0/3;
+}
 
-	class DividedWord {
-	public:
-		static const double UpperGap=11.0/31;//10.0/31//11.0/31
-		static const double LowerGap=9.0/31;
-		static const double MaxHeight=0.2;//0.15;
-		static const double MinLength=1.0/6;
-		static const double MaxLength=1.0/3;
-	private:
-		DividedWord();
-	};
+namespace Print {
+int DotsPerMeter(int fontHeight );
+const QFont FontBold();
+const QFont Font();
+const QFont FontItalic();
+static constexpr double SpaceInMedian=1.0/2;
+static constexpr double SpaceToNextLineInMedian=1.0/5;
+static constexpr double ParagraphIndentInMedian=2.0;
+static constexpr double SpaceAfterNumHeadInMedian=1.0/2;
+static constexpr int MaxImagesQueueSize=10;
+static constexpr double ProgressBarDiv=0.8;
+static constexpr double ProgressBarHeight=0.4;
+static constexpr double ProgressBarGap=0.3;
+static constexpr double SpaceBetweenLetters=2.0/32;
+static constexpr int TypicalWatermarkLength=180;
+}
 
-	class Print {
-	public:
-		static int DotsPerMeter(int fontHeight );
-		static const QFont FontBold();
-		static const QFont Font();
-		static const QFont FontItalic();
-		static const double SpaceInMedian=1.0/2;
-		static const double SpaceToNextLineInMedian=1.0/5;
-		static const double ParagraphIndentInMedian=2.0;
-		static const double SpaceAfterNumHeadInMedian=1.0/2;
-		static const int MaxImagesQueueSize=10;
-		static const double ProgressBarDiv=0.8;
-		static const double ProgressBarHeight=0.4;
-		static const double ProgressBarGap=0.3;
-        static const double SpaceBetweenLetters=2.0/32;
-		static const int TypicalWatermarkLength=180;
-	private:
-		Print();
-	};
+namespace Description {
+static constexpr double MaxHeightInMedian=4;
+static constexpr double MinSpaceAfterInMedian=0.8;
+}
 
-	class Description {
-	public:
-		static const double MaxHeightInMedian=4;
-		static const double MinSpaceAfterInMedian=0.8;
-	private:
-		Description();
-	};
+namespace NumberHeader {
+static constexpr double CorrectToAllCoefficient = 0.5;
+static constexpr double MinSpaceToTextInSpace = 2.0;
+static constexpr double MaxLengthOfNumberInMedian = 3.5;
+}
 
-	class NumberHeader {
-	public:
-		static const double CorrectToAllCoefficient = 0.5;
-		static const double MinSpaceToTextInSpace = 2.0;
-		static const double MaxLengthOfNumberInMedian = 3.5;
-	private:
-		NumberHeader();
-	};
+namespace Progress {
+static constexpr int LoadPercent=12;
+static constexpr int LoadDelay=0;
+static constexpr int LoadNumber=1;
 
-	class Progress {
-	public:
-		static const int LoadPercent=12;
-		static const int LoadDelay=0;
-		static const int LoadNumber=1;
+static constexpr int FindPercent=10;
+static constexpr int FindDelay=12;
+static constexpr int FindNumber=2;
 
-		static const int FindPercent=10;
-		static const int FindDelay=12;
-		static const int FindNumber=2;
+static constexpr int PrintPercent=74;
+static constexpr int PrintDelay=22;
+static constexpr int PrintNumber=3;
 
-		static const int PrintPercent=74;
-		static const int PrintDelay=22;
-		static const int PrintNumber=3;
+static constexpr int ProgBarPercent=4;
+static constexpr int ProgBarDelay=96;
+static constexpr int ProgBarNumber=4;
 
-		static const int ProgBarPercent=4;
-		static const int ProgBarDelay=96;
-		static const int ProgBarNumber=4;
+static constexpr int TotalNumber=4;
+}
 
-		static const int TotalNumber=4;
-	private:
-		Progress();
-	};
-private:
-	Consts();
-};
+}
 
 #endif // CONSTS_HPP

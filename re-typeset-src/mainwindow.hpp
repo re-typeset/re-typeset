@@ -31,6 +31,7 @@
 #include "scanneddocument.hpp"
 #include <QCloseEvent>
 #include "processingthread.hpp"
+#include "calibratewindow.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -72,10 +73,12 @@ private slots:
 
     void on_actionExit_triggered();
 
+	void on_optionsCalibrateAlg_clicked();
+
 private:
 	Ui::MainWindow *ui;
 	QFileDialog::Option QFileDialog_ShowAllFiles; //No '0' value in 'enum Option' in 'QFileDialog' class
-
+	CalibrateWindow * calibrate_;
 
 //MULTILANG
 protected slots:
@@ -93,7 +96,7 @@ protected:
 //end MULTILANG
 
 private:
-        QString startText_;
+    QString startText_;
 	QString stopText_;
 	ProcessingThread processingThread_;
 	QString changeFileToBasedir( QString dir );

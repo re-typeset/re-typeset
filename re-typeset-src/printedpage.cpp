@@ -36,7 +36,7 @@ PrintedPage::PrintedPage(int width, int height, int margin, int fontHeight, bool
 	rotateImages_(rotateImages), outLastPage_(-1), comicMode_(comicMode), DEbugState_( DEbugState ) {
 	image_ = new QImage( width, height, QImage::Format_RGB32 );
 	image_->fill( Qt::white );
-	lineHeight_=Cconsts::LineHeightFromTextHeight( fontHeight );
+	lineHeight_=Consts::LineHeightFromTextHeight( fontHeight );
 	spaceToNextLine_=0;
 	cursorX=margin_;
 	cursorY=margin_;
@@ -51,16 +51,16 @@ void PrintedPage::addNumberHeader(PrintedLine & numHead, int srcPageNum) {
 		numHead.maxHeight_=0;
 		QPainter writer( image_ );
 		for( int i=0; i<numHead.size(); ++i ) {
-			numHead.maxHeight_=max( numHead.maxHeight_, numHead[i].height() );
+			numHead.maxHeight_=qMax( numHead.maxHeight_, numHead[i].height() );
 			if( localCursorX+numHead[i].width()+margin_>image_->width() ) {
-				cursorY+=numHead.maxHeight_; //lineHeight_*(1+Cconsts::Print::SpaceToNextLineInMedian);
+				cursorY+=numHead.maxHeight_; //lineHeight_*(1+Consts::Print::SpaceToNextLineInMedian);
 				localCursorX=margin_;
 				numHead.maxHeight_=0;
 			}
 			writer.drawImage( localCursorX, cursorY, numHead[i] );
-			localCursorX+=Cconsts::Print::SpaceInMedian*lineHeight_+numHead[i].width();
+			localCursorX+=Consts::Print::SpaceInMedian*lineHeight_+numHead[i].width();
 		}
-		cursorY+=( 1 +Cconsts::Print::SpaceAfterNumHeadInMedian)*lineHeight_;
+		cursorY+=( 1 +Consts::Print::SpaceAfterNumHeadInMedian)*lineHeight_;
 	}
 }
 
@@ -104,7 +104,7 @@ bool PrintedPage::printLastLine() {
 	}
 	for( int i=0; i<line_.size(); ++i ) {
 		writer.drawImage( cursorX, cursorY, line_[i] );
-		cursorX+=line_[i].width()+Cconsts::Print::SpaceInMedian*lineHeight_;
+		cursorX+=line_[i].width()+Consts::Print::SpaceInMedian*lineHeight_;
 	}
 	return false;
 }
@@ -130,7 +130,7 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 			   && ! paragraph.isNewParagraph_
 			   && ! paragraph.isEmptyLineBefore_
 			   && ! paragraph.isImage_
-			   && line_.sumLengths_+line_.size()*Cconsts::Print::SpaceInMedian*lineHeight_+margin_+paragraph.first().width()+cursorX < image_->width()
+			   && line_.sumLengths_+line_.size()*Consts::Print::SpaceInMedian*lineHeight_+margin_+paragraph.first().width()+cursorX < image_->width()
 			   ) {
 
 			if( paragraph.hasDividedWordAtEnd_ && paragraph.size()==1 ) {
@@ -141,7 +141,7 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 			} else {
 				line_.push_back( paragraph.first() );
 				line_.sumLengths_+=paragraph.first().width();
-				line_.maxHeight_=max( line_.maxHeight_, paragraph.first().height() );
+				line_.maxHeight_=qMax( line_.maxHeight_, paragraph.first().height() );
 				paragraph.pop_front();
 			}
 		}
@@ -166,7 +166,7 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 			paragraph.pop_front();
 			paragraph.isImage_=false;
 			paragraph.isEmptyLineBefore_=false;
-			if( imageQueue_.size() > Cconsts::Print::MaxImagesQueueSize || comicMode_ ) {
+			if( imageQueue_.size() > Consts::Print::MaxImagesQueueSize || comicMode_ ) {
 				return true;
 			}
 		} else if( paragraph.isNewParagraph_ || paragraph.isEmptyLineBefore_ ) {
@@ -175,14 +175,14 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 			}
 			for( int i=0; i<line_.size(); ++i ) {
 				writer.drawImage( cursorX, cursorY, line_[i] );
-				cursorX+=line_[i].width()+Cconsts::Print::SpaceInMedian*lineHeight_;
+				cursorX+=line_[i].width()+Consts::Print::SpaceInMedian*lineHeight_;
 			}
 			if( paragraph.isNewParagraph_ ) {
-				cursorY+=line_.maxHeight_+Cconsts::Print::SpaceToNextLineInMedian*lineHeight_;
-				cursorX=margin_+Cconsts::Print::ParagraphIndentInMedian*lineHeight_;
+				cursorY+=line_.maxHeight_+Consts::Print::SpaceToNextLineInMedian*lineHeight_;
+				cursorX=margin_+Consts::Print::ParagraphIndentInMedian*lineHeight_;
 			} else {
 				cursorX=margin_;
-				cursorY+=line_.maxHeight_+Cconsts::Print::SpaceToNextLineInMedian*lineHeight_*2+lineHeight_;
+				cursorY+=line_.maxHeight_+Consts::Print::SpaceToNextLineInMedian*lineHeight_*2+lineHeight_;
 			}
 			line_.clear();
 			line_.maxHeight_=0;
@@ -199,7 +199,7 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 				space=( image_->width()-margin_-line_.sumLengths_-cursorX ) / ( line_.size()-1 );
 				comp=( image_->width()-margin_-line_.sumLengths_-cursorX ) - space*( line_.size()-1 );
 			} else {
-				space=Cconsts::Print::SpaceInMedian*lineHeight_;
+				space=Consts::Print::SpaceInMedian*lineHeight_;
 			}
 			for( int i=0; i<line_.size(); ++i ) {
 				writer.drawImage( cursorX, cursorY, line_[i] );
@@ -209,7 +209,7 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 					--comp;
 				}
 			}
-			cursorY+=line_.maxHeight_+Cconsts::Print::SpaceToNextLineInMedian*lineHeight_;
+			cursorY+=line_.maxHeight_+Consts::Print::SpaceToNextLineInMedian*lineHeight_;
 			cursorX=margin_;
 			line_.clear();
 			line_.maxHeight_=0;
@@ -232,8 +232,8 @@ void PrintedPage::saveAndClear(QString fileName, bool hardMargins) {
 	}
 
 	int dx=0;
-	if( image_->width()-Cconsts::Print::TypicalWatermarkLength > 0 ) {
-		dx = (image_->width()-Cconsts::Print::TypicalWatermarkLength)/2;
+	if( image_->width()-Consts::Print::TypicalWatermarkLength > 0 ) {
+		dx = (image_->width()-Consts::Print::TypicalWatermarkLength)/2;
 	}
 	QPoint startPoint( dx, image_->height()-PrintedPixelFont::TextHeight-1 );
 	startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Przeskladv );
@@ -286,9 +286,9 @@ void PrintedPage::addProgressBarsForAllPages() {
 		return;
 	}
 	int pageNum=outStat_.last().numOnPage_;
-	int progressBarGap=margin_*Cconsts::Print::ProgressBarGap;
-	int progressBarHeight=margin_*Cconsts::Print::ProgressBarHeight;
-	int progressBarDX=(1-Cconsts::Print::ProgressBarDiv)*image_->width();
+	int progressBarGap=margin_*Consts::Print::ProgressBarGap;
+	int progressBarHeight=margin_*Consts::Print::ProgressBarHeight;
+	int progressBarDX=(1-Consts::Print::ProgressBarDiv)*image_->width();
 
 	for( int i=outStat_.size()-2; i>=0; --i ) {
 		if( outStat_[i+1].numOnPage_ == 0 ) {
@@ -302,18 +302,18 @@ void PrintedPage::addProgressBarsForAllPages() {
 			p.setBrush( QColor( 224, 224, 224 ) );
 
 			for( int j=0; j<pageNum+1; ++j ) {
-				int left=(1-Cconsts::Print::ProgressBarDiv)*img.width() * (j)/(pageNum+1);
-				int right=(1-Cconsts::Print::ProgressBarDiv)*img.width() * (j+1)/(pageNum+1)-4;
+				int left=(1-Consts::Print::ProgressBarDiv)*img.width() * (j)/(pageNum+1);
+				int right=(1-Consts::Print::ProgressBarDiv)*img.width() * (j+1)/(pageNum+1)-4;
 				p.drawRect( left, progressBarGap, right-left, progressBarHeight );
 
 				if(	outStat_[i].numOnPage_ == j ) {
 					p.setBrush( QColor( 255, 255, 255 ) );
 				}
 			}
-			p.drawRect( progressBarDX, progressBarGap, Cconsts::Print::ProgressBarDiv*img.width(), progressBarHeight );
+			p.drawRect( progressBarDX, progressBarGap, Consts::Print::ProgressBarDiv*img.width(), progressBarHeight );
 
 			p.setBrush( QColor( 224, 224, 224 ) );
-			int allProgres=Cconsts::Print::ProgressBarDiv*img.width() * (outStat_[i].numOfAll_+1)/outStat_.size();
+			int allProgres=Consts::Print::ProgressBarDiv*img.width() * (outStat_[i].numOfAll_+1)/outStat_.size();
 			p.drawRect( progressBarDX, progressBarGap, allProgres, progressBarHeight );
 
 			img.save( outStat_[i].name_, "PNG" );
@@ -327,8 +327,8 @@ void PrintedPage::addProgressBarsForAllPages() {
 		p.setBrush( QColor( 224, 224, 224 ) );
 		p.setPen( QColor( 224, 224, 224 ) );
 
-		int pageProgress=(1-Cconsts::Print::ProgressBarDiv)*img.width();
-		int allProgres=Cconsts::Print::ProgressBarDiv*img.width();
+		int pageProgress=(1-Consts::Print::ProgressBarDiv)*img.width();
+		int allProgres=Consts::Print::ProgressBarDiv*img.width();
 
 		p.drawRect( 0, progressBarGap, pageProgress-progressBarGap, progressBarHeight );
 		p.drawRect( progressBarDX, progressBarGap, allProgres, progressBarHeight );
@@ -339,62 +339,62 @@ void PrintedPage::addProgressBarsForAllPages() {
 
 int PrintedPage::numTocItems() {
 	int writeArea=image_->height()-2*margin_;
-	writeArea -= 7*(Cconsts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
-	return writeArea / (lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1) ) ;
+	writeArea -= 7*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
+	return writeArea / (lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1) ) ;
 }
 
 void PrintedPage::createTitlePage(QVector<QPair< QPair<int, int>, PrintedLine> > & toc) {
-	image_->setDotsPerMeterX( Cconsts::Print::DotsPerMeter( lineHeight_ ) );
-	image_->setDotsPerMeterY( Cconsts::Print::DotsPerMeter( lineHeight_ ) );
+	image_->setDotsPerMeterX( Consts::Print::DotsPerMeter( lineHeight_ ) );
+	image_->setDotsPerMeterY( Consts::Print::DotsPerMeter( lineHeight_ ) );
 
 	QPainter writer( image_ );
 	QRect line;
 
-	writer.setFont( Cconsts::Print::FontItalic() );
-	line.setRect( 0, lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*2.3, image_->width(), lineHeight_*1.3 );
+	writer.setFont( Consts::Print::FontItalic() );
+	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*2.3, image_->width(), lineHeight_*1.3 );
 	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QString("Re-Typeset %1").arg( VERSION ) );
 
-	writer.setFont( Cconsts::Print::Font() );
-	line.setRect( 0, 0, image_->width(), lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*2 );
+	writer.setFont( Consts::Print::Font() );
+	line.setRect( 0, 0, image_->width(), lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*2 );
 	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QObject::tr("Book converted by program" ) );
 
-	line.setRect( 0, lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*4, image_->width(), lineHeight_ );
+	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*4, image_->width(), lineHeight_ );
 	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, "© Piotr Mika, Marcin Garbiak" );
 
-	line.setRect( 0, lineHeight_*(Cconsts::Print::SpaceToNextLineInMedian+1)*6, image_->width(), lineHeight_ );
+	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*6, image_->width(), lineHeight_ );
 	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
 
 	for( int i=0; i<toc.size(); ++i ) {
-		line.setRect( 0, 2*margin_+(7+i)*(Cconsts::Print::SpaceToNextLineInMedian+1)*lineHeight_, lineHeight_*3, lineHeight_ );
+		line.setRect( 0, 2*margin_+(7+i)*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_, lineHeight_*3, lineHeight_ );
 		writer.drawText( line, Qt::AlignRight, QString::number( toc[i].first.first ) + "~" );
 		if( toc[i].second.isEmpty() ) {
 			line.setLeft( line.right() );
 			line.setWidth( lineHeight_*20 );
 			writer.drawText( line, Qt::AlignLeft, QObject::tr( "approx num: %1").arg( toc[i].first.second ) );
 		} else {
-			cursorX=lineHeight_*(3+Cconsts::Print::SpaceInMedian);
+			cursorX=lineHeight_*(3+Consts::Print::SpaceInMedian);
 			cursorY=line.top();
-			toc[i].second.sumLengths_=(toc[i].second.size()-1)*lineHeight_*Cconsts::Print::SpaceInMedian;
+			toc[i].second.sumLengths_=(toc[i].second.size()-1)*lineHeight_*Consts::Print::SpaceInMedian;
 			for( int j=0; j<toc[i].second.size(); ++j ) {
 				toc[i].second.sumLengths_+=toc[i].second[j].width();
 			}
 			if( toc[i].second.sumLengths_ <= image_->width()-margin_-cursorX ) {//fits
 				for( int j=0; j<toc[i].second.size(); ++j ) {
 					writer.drawImage( cursorX, cursorY, toc[i].second[j] );
-					cursorX+=toc[i].second[j].width()+lineHeight_*Cconsts::Print::SpaceInMedian;
+					cursorX+=toc[i].second[j].width()+lineHeight_*Consts::Print::SpaceInMedian;
 				}
 			} else {//cut
 				for( int j=0; j<2; ++j ) {//2 first words always
 					if( j<toc[i].second.size() ) {
 						writer.drawImage( cursorX, cursorY, toc[i].second[j] );
-						cursorX+=toc[i].second[j].width()+lineHeight_*Cconsts::Print::SpaceInMedian;
+						cursorX+=toc[i].second[j].width()+lineHeight_*Consts::Print::SpaceInMedian;
 					}
 				}
 				if( toc[i].second.size() > 2 ) {//2 last words always
 					int j=toc[i].second.size()-1;
 					int cursorX2=image_->width()-margin_-toc[i].second[ j ].width();
 					writer.drawImage( cursorX2, cursorY, toc[i].second[ j ] );
-					cursorX2-=lineHeight_*Cconsts::Print::SpaceInMedian;
+					cursorX2-=lineHeight_*Consts::Print::SpaceInMedian;
 					--j;
 					if( j > 2 ) {
 						cursorX2-=toc[i].second[j].width();
@@ -406,7 +406,7 @@ void PrintedPage::createTitlePage(QVector<QPair< QPair<int, int>, PrintedLine> >
 					for( int j=2; j<toc[i].second.size()-2; ++j ) {//fill if there is place
 						if( cursorX2 - cursorX > toc[i].second[j].width() ) {
 							writer.drawImage( cursorX, cursorY, toc[i].second[j] );
-							cursorX+=toc[i].second[j].width()+lineHeight_*Cconsts::Print::SpaceInMedian;
+							cursorX+=toc[i].second[j].width()+lineHeight_*Consts::Print::SpaceInMedian;
 						} else {
 							writer.drawImage( cursorX, cursorY, toc[i].second[j].copy( 0, 0, cursorX2-cursorX, toc[i].second[j].height() ) );
 							cursorX=cursorX2;
@@ -421,8 +421,8 @@ void PrintedPage::createTitlePage(QVector<QPair< QPair<int, int>, PrintedLine> >
 
 
 QImage PrintedPage::join(const QImage & a, const QImage & b) {
-	int gap = round( Cconsts::Print::SpaceBetweenLetters * lineHeight_ );
-	QImage j( a.width()+gap+b.width(), max( a.height(), b.height() ), QImage::Format_RGB32 );
+	int gap = qRound( Consts::Print::SpaceBetweenLetters * lineHeight_ );
+	QImage j( a.width()+gap+b.width(), qMax( a.height(), b.height() ), QImage::Format_RGB32 );
 	j.fill( Qt::white );
 	QPainter p( &j );
 	p.drawImage( 0, 0, a );

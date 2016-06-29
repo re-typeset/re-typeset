@@ -41,7 +41,10 @@ SOURCES  += main.cpp \
     printedpagestat.cpp \
     printedpixelfont.cpp \
     license.cpp \
-    processingthread.cpp
+    processingthread.cpp \
+    calibratewindow.cpp \
+    variableparameter.cpp \
+    calibrateimagewidget.cpp
 
 HEADERS  += version.hpp \
     mainwindow.hpp \
@@ -55,9 +58,13 @@ HEADERS  += version.hpp \
     printedpagestat.hpp \
     printedpixelfont.hpp \
     license.hpp \
-    processingthread.hpp
+    processingthread.hpp \
+    calibratewindow.hpp \
+    variableparameter.hpp \
+    calibrateimagewidget.h
 
-FORMS  += mainwindow.ui
+FORMS  += mainwindow.ui \
+    calibratewindow.ui
 
 TRANSLATIONS  += lang/re-typeset_pl.ts \
     lang/re-typeset_en.ts
@@ -66,6 +73,7 @@ QMAKE_CXXFLAGS += -Wall
 
 
 CONFIG += staticlib
+CONFIG += c++11
 
 #QTPLUGIN  += qtiff
 
