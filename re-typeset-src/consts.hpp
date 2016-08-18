@@ -111,7 +111,7 @@ namespace Print {
 int DotsPerMeter(int fontHeight );
 const QFont FontBold();
 const QFont Font();
-const QFont FontItalic();
+const QFont FontBig();
 static constexpr double SpaceInMedian=1.0/2;
 static constexpr double SpaceToNextLineInMedian=1.0/5;
 static constexpr double ParagraphIndentInMedian=2.0;

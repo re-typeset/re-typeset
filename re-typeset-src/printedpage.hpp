@@ -49,7 +49,8 @@ public:
 
 	int numTocItems();
 
-	void createTitlePage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc );
+	void createTitlePage(QString author, QString title);
+	void createTocPage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc );
 
 protected:
 	int margin_;

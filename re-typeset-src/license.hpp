@@ -26,9 +26,9 @@
 #include <QString>
 
 namespace License{
-    QString header();
-    QString body();
-    QString license();
+QString header();
+QString body();
+QString license();
 
 }
 

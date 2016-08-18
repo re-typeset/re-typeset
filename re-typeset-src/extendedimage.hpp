@@ -25,13 +25,13 @@
 class ExtendedImage : public QImage
 {
 public:
-    ExtendedImage();
-    ExtendedImage(int width, int height, Format format);
-    ExtendedImage(const QString & fileName, const char * format = 0);
-    ExtendedImage(const QImage & image);
+	ExtendedImage();
+	ExtendedImage(int width, int height, Format format);
+	ExtendedImage(const QString & fileName, const char * format = 0);
+	ExtendedImage(const QImage & image);
 
-    ExtendedImage convertToMonoImage(int treshold);
-    ExtendedImage histogramEqualization();
+	ExtendedImage convertToMonoImage(int treshold);
+	ExtendedImage histogramEqualization();
 };
 
 #endif // EXTENDEDIMAGE_H

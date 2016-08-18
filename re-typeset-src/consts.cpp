@@ -63,9 +63,9 @@ const QFont Consts::Print::Font() {
 	return QFont( "Serif", 10, QFont::Normal );
 }
 
-const QFont Consts::Print::FontItalic()
+const QFont Consts::Print::FontBig()
 {
-	return QFont( "Serif", 11, QFont::Normal, true );
+	return QFont( "Serif", 14, QFont::Normal );
 }
 
 static QString tr(const char * sourceText) {

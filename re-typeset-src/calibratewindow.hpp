@@ -39,31 +39,31 @@ public:
 
 	QFormLayout * getParametersFormLayout();
 
-    void setDirPath(const QString &dirPath);
+	void setDirPath(const QString &dirPath);
 
-    void setTreshold(int treshold);
-    void connectSpinBoxes();
+	void setTreshold(int treshold);
+	void connectSpinBoxes();
 
 public slots:
-    void runAlgortithm();
-    void setZoomFit();
+	void runAlgortithm();
+	void setZoomFit();
 
 private slots:
-    void on_previousImageButton_clicked();
+	void on_previousImageButton_clicked();
 
-    void on_nextImageButton_clicked();    
+	void on_nextImageButton_clicked();
 
 private:
-    void reloadImage();
+	void reloadImage();
 
 
 
-    Ui::CalibrateWindow *ui;
-    int imageNum_;
-    int treshold_;
-    QString dirPath_;
-    QImage inputImage_;
-    QImage outputImage_;
+	Ui::CalibrateWindow *ui;
+	int imageNum_;
+	int treshold_;
+	QString dirPath_;
+	QImage inputImage_;
+	QImage outputImage_;
 
 };
 

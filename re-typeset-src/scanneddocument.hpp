@@ -40,9 +40,10 @@ public:
 	void findWords( bool comicMode=false, bool findDividedWords=true );
 
 	int print( int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling,
-               bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, bool equalizeHistogram );
+			   bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix,
+			   QString author, QString title,
+			   bool equalizeHistogram );
 
-    static QImage convertToMonoImage(const QImage & imageColor , int treshold);
 signals:
 	void newProgressBarValue(int percent, QString name="", int n=0, int of=0);
 

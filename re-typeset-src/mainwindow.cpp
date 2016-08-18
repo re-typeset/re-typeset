@@ -127,7 +127,19 @@ void MainWindow::on_srcDirButton_clicked() {
             ui->destDirCreate->setText( tr( "Create directory: \n``%1.out''" ).arg( fi.baseName() ) );
             ui->destDirCreate->setEnabled( true );
         }
-        ui->outFilesPrefix->setText( fi.baseName() );
+		ui->outFilesPrefix->setText( fi.baseName() );
+		QString div="--";
+		QStringList authorTitle = fi.baseName().split( div );
+
+		if( authorTitle.size() == 2 ) {
+			if( ui->authorEdit->text().isEmpty() ) {
+				ui->authorEdit->setText( authorTitle[0].replace(QChar('_'), QChar(' ')) );
+			}
+			if( ui->titleEdit->text().isEmpty() ) {
+				ui->titleEdit->setText( authorTitle[1].replace(QChar('_'), QChar(' ')) );
+			}
+		}
+
     }
 }
 
@@ -193,6 +205,8 @@ void MainWindow::on_outStartButton_clicked() {
             processingThread_.equalizeHistogram=ui->optionsEqualizeHistogram->isChecked();
             processingThread_.comicMode=ui->optionsComicMode->isChecked();
 			processingThread_.fileNamePrefix=ui->outFilesPrefix->text();
+			processingThread_.author=ui->authorEdit->text();
+			processingThread_.title=ui->titleEdit->text();
 
 			processingThread_.work=true;
 			processingThread_.progressBarSignalReciever=this;
@@ -253,6 +267,8 @@ void MainWindow::uIWidgetsSetDisabled(bool disabled) {
 	ui->predef->setDisabled( disabled );
 	ui->outFiles->setDisabled( disabled );
     ui->actionShowDebugImages->setDisabled( disabled );
+	ui->author->setDisabled( disabled );
+	ui->title->setDisabled( disabled );
 }
 
 void MainWindow::closeEvent(QCloseEvent * event) {

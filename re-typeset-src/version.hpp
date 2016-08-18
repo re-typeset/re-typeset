@@ -35,10 +35,17 @@
 //    qt5-base
 //    qt5-imageformats (for tiff support)
 
-#define VERSION "1.0.0"
+#define VERSION "1.1.0"
 //# MAJOR.MINOR.PATCH understand as in http://semver.org/spec/v2.0.0.html
 
 // Versions history:
+// 1.1.0: New features available:  live configuration of algorithm parameters,
+//        histogram equalisation for images (beta),  new table of contents and
+//        title page -- user can write author and title of book.  Additionally
+//        these values can be read form directory's name with specific syntax:
+//        `` Author_Name--Book_Title ''.  Separator  is  double  hyphen  (--).
+//        Underscore is replaced to space. Space in name is allowed too.
+//
 // 1.0.0: All basic functionality is working. Page segmentation have following
 //        features:  finding  lines and  words with  searching of  images with
 //        descriptions,  divided words  and new  paragraphs;  finding headers,

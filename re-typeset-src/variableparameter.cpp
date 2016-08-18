@@ -30,7 +30,7 @@ VariableParameter::VariableParameter()
 void VariableParameter::addToFormLayout(QFormLayout * layout)
 {
 	QString afterName=":";
-    layout->addRow(name_+afterName, spinBox_);
+	layout->addRow(name_+afterName, spinBox_);
 }
 
 void VariableParameter::configure(QFormLayout * layout, QString name, double defaultVal, QString suffix, double minVal, double maxVal, QString description)

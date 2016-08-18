@@ -29,31 +29,31 @@
 class HSVImage
 {
 public:
-    HSVImage();
-    HSVImage(const QImage &img);
+	HSVImage();
+	HSVImage(const QImage &img);
 
-    class HSV
-    {
-    public:
-        HSV();
-        HSV( QRgb pixel );
-        QRgb toQRgb() const;
+	class HSV
+	{
+	public:
+		HSV();
+		HSV( QRgb pixel );
+		QRgb toQRgb() const;
 
-        qint16 hue;
-        quint8 saturation;
-        quint8 value;
-    };
+		qint16 hue;
+		quint8 saturation;
+		quint8 value;
+	};
 
-    void setPixel(int x, int y, HSV hsv);
-    HSV getPixel(int x, int y) const;
-    void equalizeHistogram();
-    QImage toQImage() const;
+	void setPixel(int x, int y, HSV hsv);
+	HSV getPixel(int x, int y) const;
+	void equalizeHistogram();
+	QImage toQImage() const;
 
 private:
-    int width_;
-    int height_;
-    QVector<HSV> data_;
-    int xy2index(int x, int y) const;
+	int width_;
+	int height_;
+	QVector<HSV> data_;
+	int xy2index(int x, int y) const;
 };
 
 #endif // HSVIMAGE_H

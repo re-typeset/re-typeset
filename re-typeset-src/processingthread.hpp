@@ -29,6 +29,8 @@ public:
 	bool rotateImages;
     bool equalizeHistogram;
 	QString fileNamePrefix;
+	QString author;
+	QString title;
 	int status;
 	bool work;
 

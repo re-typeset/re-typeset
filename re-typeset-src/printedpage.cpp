@@ -347,34 +347,71 @@ void PrintedPage::addProgressBarsForAllPages() {
 }
 
 int PrintedPage::numTocItems() {
-	int writeArea=image_->height()-2*margin_;
-	writeArea -= 7*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
+	int top = 2*margin_+(4)*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
+	int writeArea=image_->height()-2*margin_ - top;
 	return writeArea / (lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1) ) ;
 }
 
-void PrintedPage::createTitlePage(QVector<QPair< QPair<int, int>, PrintedLine> > & toc) {
+void PrintedPage::createTitlePage(QString author, QString title) {
+
+	image_->setDotsPerMeterX( Consts::Print::DotsPerMeter( lineHeight_ ) );
+	image_->setDotsPerMeterY( Consts::Print::DotsPerMeter( lineHeight_ ) );
+
+	QPainter writer( image_ );
+	QRect line;
+	int nextY=lineHeight_*4;
+
+	writer.setFont( Consts::Print::FontBig() );
+	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, author );
+
+	nextY+=line.height() + lineHeight_*2;
+
+	writer.setFont( Consts::Print::FontBig() );
+	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, title );
+
+	nextY+=line.height() + lineHeight_*4;
+
+	writer.setFont( Consts::Print::Font() );
+	line.setRect( 0, nextY, image_->width(), lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*2 );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QObject::tr("Book converted by program" ) );
+
+	nextY+=line.height() + lineHeight_;
+
+	writer.setFont( Consts::Print::Font() );
+	line.setRect( 0, nextY, image_->width(), lineHeight_*1.3 );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QString("Re-Typeset %1").arg( VERSION ) );
+
+	nextY+=line.height() + lineHeight_;
+
+	line.setRect( 0, nextY, image_->width(), lineHeight_ );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, "© Piotr Mika, Marcin Garbiak" );
+
+	nextY+=line.height() + lineHeight_;
+
+	line.setRect( 0, nextY, image_->width(), lineHeight_ );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
+
+
+
+
+}
+void PrintedPage::createTocPage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc)
+{
 	image_->setDotsPerMeterX( Consts::Print::DotsPerMeter( lineHeight_ ) );
 	image_->setDotsPerMeterY( Consts::Print::DotsPerMeter( lineHeight_ ) );
 
 	QPainter writer( image_ );
 	QRect line;
 
-	writer.setFont( Consts::Print::FontItalic() );
-	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*2.3, image_->width(), lineHeight_*1.3 );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QString("Re-Typeset %1").arg( VERSION ) );
-
 	writer.setFont( Consts::Print::Font() );
 	line.setRect( 0, 0, image_->width(), lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*2 );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QObject::tr("Book converted by program" ) );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QObject::tr("Table of contents" ) );
 
-	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*4, image_->width(), lineHeight_ );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, "© Piotr Mika, Marcin Garbiak" );
-
-	line.setRect( 0, lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1)*6, image_->width(), lineHeight_ );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
 
 	for( int i=0; i<toc.size(); ++i ) {
-		line.setRect( 0, 2*margin_+(7+i)*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_, lineHeight_*3, lineHeight_ );
+		line.setRect( 0, 2*margin_+(4+i)*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_, lineHeight_*3, lineHeight_ );
 		writer.drawText( line, Qt::AlignRight, QString::number( toc[i].first.first ) + "~" );
 		if( toc[i].second.isEmpty() ) {
 			line.setLeft( line.right() );

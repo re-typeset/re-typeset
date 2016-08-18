@@ -18,6 +18,7 @@
 
 #include "scanneddocument.hpp"
 #include "printedline.hpp"
+#include "extendedimage.hpp"
 
 ScannedDocument::ScannedDocument() {
 	;//NOOP
@@ -57,8 +58,8 @@ int ScannedDocument::loadPages(int treshold) {
 
 		QString fileColor = srcDir_ + "/" + filesInDir[i];
 		QString fileMono = destDir_ + "/TMP_" + filesInDir[i] + ".png";
-		QImage imageColor( fileColor );
-        QImage imageMono = convertToMonoImage( imageColor, treshold );
+		ExtendedImage imageColor( fileColor );
+		QImage imageMono = imageColor.convertToMonoImage( treshold );
 
 		imageMono.save( fileMono, "PNG" );
 
@@ -133,7 +134,7 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	}
 }
 
-int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, bool equalizeHistogram ) {
+int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, QString author, QString title, bool equalizeHistogram ) {
 	if( ! (*work_) ) {
 		return 0;
 	}
@@ -142,7 +143,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 	PrintedLine paragraph;
 	PrintedLine numHead;
 	const StatsPack & stats=lineStats_.getStats();
-	int number=1; //0 for titlepage
+	int number=2; //0 for titlepage, 1 for toc
 	double scalingRatio=(double)fontHeight/(double)stats.height_;
 	if( noUpscalling && scalingRatio > 1 ) {
 		scalingRatio=1;
@@ -258,25 +259,12 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 		destPage.addProgressBarsForAllPages();
 	}
 
-	destPage.createTitlePage( toc );
+	destPage.createTocPage( toc );
+	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_002.png", hardMargins );
+
+	destPage.createTitlePage( author, title );
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_001.png", hardMargins );
 
-    return number-1;
-}
 
-QImage ScannedDocument::convertToMonoImage(const QImage &imageColor, int treshold)
-{
-    QImage imageMono( imageColor.size(), QImage::Format_Mono );
-    const uint white=0;
-    const uint black=1;
-    for( int x=0; x<imageColor.width(); ++x ) {
-        for( int y=0; y<imageColor.height(); ++y ) {
-            if( qGray( imageColor.pixel( x, y ) ) > treshold ) {
-                imageMono.setPixel( x, y, black );
-            } else {
-                imageMono.setPixel( x, y, white );
-            }
-        }
-    }
-    return imageMono;
+    return number-1;
 }

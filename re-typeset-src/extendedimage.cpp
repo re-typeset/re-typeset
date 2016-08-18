@@ -23,47 +23,47 @@
 
 ExtendedImage::ExtendedImage()
 {
-    //NOOP
+	//NOOP
 }
 
 ExtendedImage::ExtendedImage(int width, int height, QImage::Format format)
-    : QImage(width, height, format)
+	: QImage(width, height, format)
 {
-    //NOOP
+	//NOOP
 }
 
 ExtendedImage::ExtendedImage(const QString &fileName, const char *format)
-    : QImage(fileName, format)
+	: QImage(fileName, format)
 {
-    //NOOP
+	//NOOP
 }
 
 ExtendedImage::ExtendedImage(const QImage &image)
-    : QImage(image)
+	: QImage(image)
 {
-    //NOOP
+	//NOOP
 }
 
 ExtendedImage ExtendedImage::convertToMonoImage(int treshold)
 {
-    QImage imageMono( size(), QImage::Format_Mono );
-    const uint white=0;
-    const uint black=1;
-    for( int x=0; x<width(); ++x ) {
-        for( int y=0; y<height(); ++y ) {
-            if( qGray( pixel( x, y ) ) > treshold ) {
-                setPixel( x, y, black );
-            } else {
-                setPixel( x, y, white );
-            }
-        }
-    }
-    return imageMono;
+	QImage imageMono( size(), QImage::Format_Mono );
+	const uint white=0;
+	const uint black=1;
+	for( int x=0; x<width(); ++x ) {
+		for( int y=0; y<height(); ++y ) {
+			if( qGray( pixel( x, y ) ) > treshold ) {
+				imageMono.setPixel( x, y, black );
+			} else {
+				imageMono.setPixel( x, y, white );
+			}
+		}
+	}
+	return imageMono;
 }
 
 ExtendedImage ExtendedImage::histogramEqualization()
 {
-    HSVImage hsvImage(*this);
-    hsvImage.equalizeHistogram();
-    return hsvImage.toQImage();
+	HSVImage hsvImage(*this);
+	hsvImage.equalizeHistogram();
+	return hsvImage.toQImage();
 }
