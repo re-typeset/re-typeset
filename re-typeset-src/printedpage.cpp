@@ -21,8 +21,11 @@
 #include "version.hpp"
 #include <QPainter>
 #include "extendedimage.hpp"
+#include "pixelfont/letterswriter.hpp"
+#include "pixelfont/paintdeviceqimage.hpp"
 
-PrintedPage::PrintedPage() {
+PrintedPage::PrintedPage()
+{
 	;//NOOP
 }
 
@@ -33,8 +36,19 @@ PrintedPage::~PrintedPage() {
 }
 
 PrintedPage::PrintedPage(int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-						   bool comicMode, bool equalizeHistogram, bool DEbugState): margin_( margin ), isDividedWord_(false), justify_(justify),
-    rotateImages_(rotateImages), equalizeHistogram_(equalizeHistogram), outLastPage_(-1), comicMode_(comicMode), DEbugState_( DEbugState ) {
+                           bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState)
+    : margin_( margin )
+    , isDividedWord_(false)
+    , justify_(justify)
+    , rotateImages_(rotateImages)
+    , equalizeHistogram_(equalizeHistogram)
+    , outLastPage_(-1)
+    , comicMode_(comicMode)
+    , DEbugState_( DEbugState )
+    , author_(author)
+    , title_(title)
+    , date_(QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ))
+{
 	image_ = new QImage( width, height, QImage::Format_RGB32 );
 	image_->fill( Qt::white );
 	lineHeight_=Consts::LineHeightFromTextHeight( fontHeight );
@@ -240,28 +254,20 @@ void PrintedPage::saveAndClear(QString fileName, bool hardMargins) {
 		image_->setPixel( image_->width()-1, image_->height()-1, QColor( 0, 0, 0 ).rgb() );
 	}
 
-	int dx=0;
-	if( image_->width()-Consts::Print::TypicalWatermarkLength > 0 ) {
-		dx = (image_->width()-Consts::Print::TypicalWatermarkLength)/2;
-	}
-	QPoint startPoint( dx, image_->height()-PrintedPixelFont::TextHeight-1 );
-	startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Przeskladv );
-	startPoint.rx() += PrintedPixelFont::Space;
-	
-	const char * verPos=VERSION;	
-	while( * verPos ) {
-		if( (* verPos) >= '0' && (* verPos) <= '9' ) {
-			startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Number, (* verPos)-'0' );
-		} else {
-			startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::Dot );
-		}
-		startPoint.rx() += 1;
-		++verPos;
-	}
-	startPoint.rx() -= 1;
-		
-	startPoint.rx() += PrintedPixelFont::Space;
-	startPoint=PrintedPixelFont::putText( *image_, startPoint, PrintedPixelFont::cPiotrMika );
+    PaintDeviceQImage pdimg(*image_);
+    LettersWriter lw(pdimg);
+
+    QRect areaBottom(0, image_->height()-Letters::NumLines, image_->width(), Letters::NumLines );
+    QString textBottom=QString("Re-Typeset %1 ($) P.Mika, M.Garbiak").arg(VERSION);
+    lw.write(textBottom, areaBottom, QColor( 224, 224, 224 ).rgb() );
+
+    QRect areaLeft(0, 0, Letters::NumLines, image_->height() );
+    QString textLeft=QString("%1 -- %2").arg(author_).arg(title_);
+    lw.write(textLeft, areaLeft, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
+
+	QRect areaRight(image_->width()-Letters::NumLines, image_->height()/2, Letters::NumLines, image_->height()/2 );
+    QString textRight=date_;
+    lw.write(textRight, areaRight, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
 
 	image_->save( fileName, "PNG" );
 	image_->fill( Qt::white );
@@ -290,7 +296,7 @@ void PrintedPage::saveAndClear(QString fileName, bool hardMargins) {
 	}
 }
 
-void PrintedPage::addProgressBarsForAllPages() {
+void PrintedPage::addProgressBarsForAllPages( bool comicMode ) {
 	if( outStat_.isEmpty() ) {
 		return;
 	}
@@ -303,35 +309,45 @@ void PrintedPage::addProgressBarsForAllPages() {
 		if( outStat_[i+1].numOnPage_ == 0 ) {
 			pageNum=outStat_[i].numOnPage_;
 		}
+
+		QImage img( outStat_[i].name_ );
+		QPainter p( &img );
 		if( ! outStat_[i].disableProgressBar ) {
-			QImage img( outStat_[i].name_ );
-			QPainter p( &img );
+			if( ! comicMode ) {
+				p.setPen( QColor( 224, 224, 224 ) );
+				p.setBrush( QColor( 224, 224, 224 ) );
 
-			p.setPen( QColor( 224, 224, 224 ) );
-			p.setBrush( QColor( 224, 224, 224 ) );
+				for( int j=0; j<pageNum+1; ++j ) {
+					int left=(1-Consts::Print::ProgressBarDiv)*img.width() * (j)/(pageNum+1);
+					int right=(1-Consts::Print::ProgressBarDiv)*img.width() * (j+1)/(pageNum+1)-4;
+					p.drawRect( left, progressBarGap, right-left, progressBarHeight );
 
-			for( int j=0; j<pageNum+1; ++j ) {
-				int left=(1-Consts::Print::ProgressBarDiv)*img.width() * (j)/(pageNum+1);
-				int right=(1-Consts::Print::ProgressBarDiv)*img.width() * (j+1)/(pageNum+1)-4;
-				p.drawRect( left, progressBarGap, right-left, progressBarHeight );
-
-				if(	outStat_[i].numOnPage_ == j ) {
-					p.setBrush( QColor( 255, 255, 255 ) );
+					if(	outStat_[i].numOnPage_ == j ) {
+						p.setBrush( QColor( 255, 255, 255 ) );
+					}
 				}
+				p.drawRect( progressBarDX, progressBarGap, Consts::Print::ProgressBarDiv*img.width(), progressBarHeight );
+
+				p.setBrush( QColor( 224, 224, 224 ) );
+				int allProgres=Consts::Print::ProgressBarDiv*img.width() * (outStat_[i].numOfAll_+1)/outStat_.size();
+				p.drawRect( progressBarDX, progressBarGap, allProgres, progressBarHeight );
 			}
-			p.drawRect( progressBarDX, progressBarGap, Consts::Print::ProgressBarDiv*img.width(), progressBarHeight );
-
-			p.setBrush( QColor( 224, 224, 224 ) );
-			int allProgres=Consts::Print::ProgressBarDiv*img.width() * (outStat_[i].numOfAll_+1)/outStat_.size();
-			p.drawRect( progressBarDX, progressBarGap, allProgres, progressBarHeight );
-
-			img.save( outStat_[i].name_, "PNG" );
 		}
+		PaintDeviceQImage pdimg(img);
+		LettersWriter lw(pdimg);
+
+		QRect areaRight(image_->width()-Letters::NumLines, 0, Letters::NumLines, image_->height()/2 );
+		QString textRight=QString("Page %1 of %2").arg(outStat_[i].numOfAll_+1).arg(outStat_.size());
+		lw.write(textRight, areaRight, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
+
+		img.save( outStat_[i].name_, "PNG" );
+
 
 	}
 
+
+	QImage img( outStat_.last().name_ );
 	if( ! outStat_.last().disableProgressBar ) {
-		QImage img( outStat_.last().name_ );
 		QPainter p( &img );
 		p.setBrush( QColor( 224, 224, 224 ) );
 		p.setPen( QColor( 224, 224, 224 ) );
@@ -341,10 +357,17 @@ void PrintedPage::addProgressBarsForAllPages() {
 
 		p.drawRect( 0, progressBarGap, pageProgress-progressBarGap, progressBarHeight );
 		p.drawRect( progressBarDX, progressBarGap, allProgres, progressBarHeight );
-
-		img.save( outStat_.last().name_, "PNG" );
 	}
+
+	PaintDeviceQImage pdimg(img);
+	LettersWriter lw(pdimg);
+	QRect areaRight(image_->width()-Letters::NumLines, 0, Letters::NumLines, image_->height()/2 );
+	QString textRight=QString("Page %1 of %2").arg(outStat_.size()).arg(outStat_.size());
+	lw.write(textRight, areaRight, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
+
+	img.save( outStat_.last().name_, "PNG" );
 }
+
 
 int PrintedPage::numTocItems() {
 	int top = 2*margin_+(4)*(Consts::Print::SpaceToNextLineInMedian+1)*lineHeight_;
@@ -352,7 +375,7 @@ int PrintedPage::numTocItems() {
 	return writeArea / (lineHeight_*(Consts::Print::SpaceToNextLineInMedian+1) ) ;
 }
 
-void PrintedPage::createTitlePage(QString author, QString title) {
+void PrintedPage::createTitlePage() {
 
 	image_->setDotsPerMeterX( Consts::Print::DotsPerMeter( lineHeight_ ) );
 	image_->setDotsPerMeterY( Consts::Print::DotsPerMeter( lineHeight_ ) );
@@ -363,13 +386,13 @@ void PrintedPage::createTitlePage(QString author, QString title) {
 
 	writer.setFont( Consts::Print::FontBig() );
 	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, author );
+    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, author_ );
 
 	nextY+=line.height() + lineHeight_*2;
 
 	writer.setFont( Consts::Print::FontBig() );
 	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, title );
+    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, title_ );
 
 	nextY+=line.height() + lineHeight_*4;
 
@@ -391,7 +414,7 @@ void PrintedPage::createTitlePage(QString author, QString title) {
 	nextY+=line.height() + lineHeight_;
 
 	line.setRect( 0, nextY, image_->width(), lineHeight_ );
-	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
+    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, date_ );
 
 
 

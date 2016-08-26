@@ -46,7 +46,10 @@ SOURCES  += main.cpp \
     variableparameter.cpp \
     calibrateimagewidget.cpp \
     extendedimage.cpp \
-    hsvimage.cpp
+    hsvimage.cpp \
+    pixelfont/letters.cpp \
+    pixelfont/letterswriter.cpp \
+    pixelfont/paintdeviceqimage.cpp
 
 HEADERS  += version.hpp \
     mainwindow.hpp \
@@ -65,7 +68,10 @@ HEADERS  += version.hpp \
     variableparameter.hpp \
     calibrateimagewidget.hpp \
     extendedimage.hpp \
-    hsvimage.hpp    
+    hsvimage.hpp \    
+    pixelfont/letters.hpp \
+    pixelfont/letterswriter.hpp \
+    pixelfont/paintdeviceqimage.hpp
 
 FORMS  += mainwindow.ui \
     calibratewindow.ui

@@ -30,10 +30,10 @@
 class PrintedPage
 {
 public:
-	PrintedPage();
+    PrintedPage();
 	virtual ~PrintedPage();
 	PrintedPage( int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-                  bool comicMode, bool equalizeHistogram, bool DEbugState=false );
+                  bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState=false );
 
 	void addNumberHeader( PrintedLine & numHead, int srcPageNum );
 
@@ -45,11 +45,11 @@ public:
 
 	bool printImagesFromQueue( bool final=false );
 
-	void addProgressBarsForAllPages();
+	void addProgressBarsForAllPages(bool comicMode);
 
 	int numTocItems();
 
-	void createTitlePage(QString author, QString title);
+    void createTitlePage();
 	void createTocPage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc );
 
 protected:
@@ -73,6 +73,9 @@ protected:
 	bool comicMode_;
 	bool DEbugState_;
 	QVector< PrintedPageStat > outStat_;
+    QString author_;
+    QString title_;
+    QString date_;
 
 	QImage join( const QImage & a, const QImage & b );
 

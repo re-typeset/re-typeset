@@ -150,7 +150,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 		fontHeight=stats.height_;
 	}
 	int maxWordLength=Consts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
-    PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, equalizeHistogram, DEbugState_ );
+    PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, equalizeHistogram, author, title, DEbugState_ );
 
 	double numTocStep=(double)pages_.size()/destPage.numTocItems();
 	double numTocCurrentStep=numTocStep;
@@ -254,15 +254,15 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 							   + QString("%1").arg( number, 3, 10, QChar('0') ) + ".png", hardMargins );
 	}
 
-	if( ! comicMode ) {
-		newProgressBarValue( Consts::Progress::ProgBarDelay, tr("generating pages' progress bars"), Consts::Progress::ProgBarNumber, Consts::Progress::TotalNumber );
-		destPage.addProgressBarsForAllPages();
-	}
+
+	newProgressBarValue( Consts::Progress::ProgBarDelay, tr("generating pages' progress bars"), Consts::Progress::ProgBarNumber, Consts::Progress::TotalNumber );
+	destPage.addProgressBarsForAllPages( comicMode );
+
 
 	destPage.createTocPage( toc );
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_002.png", hardMargins );
 
-	destPage.createTitlePage( author, title );
+    destPage.createTitlePage();
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_001.png", hardMargins );
 
 
