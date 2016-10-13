@@ -17,6 +17,7 @@
 // with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "scannedpage.hpp"
+#include <QDebug>
 
 ScannedPage::ScannedPage() {
 	;//NOOP
@@ -28,54 +29,54 @@ ScannedPage::ScannedPage(QString fileMono, QString fileColor): fileMono_(fileMon
 
 void ScannedPage::getLinesAndHeights(Stats & stats) {
 	QImage image( fileMono_ );
-    getLinesAndHeights(stats, image);
+	getLinesAndHeights(stats, image);
 }
 
 void ScannedPage::getLinesAndHeights(Stats &stats, const QImage &image)
 {
-    ScannedLine currentLine;
-    currentLine.setLeft( 0 );
-    currentLine.blockLeftPos_=0;
-    currentLine.setRight( image.width()-1 );
+	ScannedLine currentLine;
+	currentLine.setLeft( 0 );
+	currentLine.blockLeftPos_=0;
+	currentLine.setRight( image.width()-1 );
 
-    QRgb black=QColor( 0, 0 ,0 ).rgb();
-    bool lineStarted=false;
+	QRgb black=QColor( 0, 0 ,0 ).rgb();
+	bool lineStarted=false;
 
-    for( int height=image.height(), i=0; i<height; ++i ) {//for linie
-        int c=0;
-        for( int width=image.width(), j=0; j<width; ++j ) {
-            if( image.pixel(j, i) == black ) {
-                ++c;
-                break;
-            }
-        }
-        if( c > 0 ) {
-            if( ! lineStarted ) {
-                lineStarted=true;
-                currentLine.setTop( i );
-                if( ! lines_.empty() ) {
-                    lines_.last().setNextLineTop( i );
-                }
-            }
-        } else {
-            if( lineStarted ) {
-                currentLine.setBottom( i-1 );
-                lineStarted=false;
-                if( ! lines_.empty() ) {
-                    StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
-                    stats.add( pack );
-                }
-                lines_.push_back( currentLine );
-            }
-        }
-    }//for linie -- end
-    if( lineStarted ) {
-        currentLine.setBottom( image.height()-1 );
-        lineStarted=false;
-        lines_.push_back( currentLine );
-        StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
-        stats.add( pack );
-    }
+	for( int height=image.height(), i=0; i<height; ++i ) {//for linie
+		int c=0;
+		for( int width=image.width(), j=0; j<width; ++j ) {
+			if( image.pixel(j, i) == black ) {
+				++c;
+				break;
+			}
+		}
+		if( c > 0 ) {
+			if( ! lineStarted ) {
+				lineStarted=true;
+				currentLine.setTop( i );
+				if( ! lines_.empty() ) {
+					lines_.last().setNextLineTop( i );
+				}
+			}
+		} else {
+			if( lineStarted ) {
+				currentLine.setBottom( i-1 );
+				lineStarted=false;
+				if( ! lines_.empty() ) {
+					StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
+					stats.add( pack );
+				}
+				lines_.push_back( currentLine );
+			}
+		}
+	}//for linie -- end
+	if( lineStarted ) {
+		currentLine.setBottom( image.height()-1 );
+		lineStarted=false;
+		lines_.push_back( currentLine );
+		StatsPack pack( lines_.last().height(), lines_.last().spaceToNextLine_ );
+		stats.add( pack );
+	}
 }
 
 void ScannedPage::reConnectDots(StatsPack stats) {
@@ -104,28 +105,28 @@ void ScannedPage::reConnectDots(StatsPack stats) {
 
 void ScannedPage::trimDivideLines(StatsPack stats) {
 	QImage image( fileMono_ );
-    trimDivideLines(stats, image);
+	trimDivideLines(stats, image);
 }
 
 void ScannedPage::trimDivideLines(StatsPack stats, const QImage &image) {
-    for( int i=0; i<lines_.size(); ++i ) {
-        QVector< ScannedLine > newLines = lines_[i].collapseLine( image, stats );
-        if( ! newLines.empty() ) {//line returns lines on which she was divided
-            lines_[i]=newLines[0];
-            for( int j=1; j<newLines.size(); ++j ) {
-                ++i;
-                lines_.insert( i, newLines[j] );
-            }
-        } else {
-            lines_.remove( i );
-            --i;
-        }
-    }
+	for( int i=0; i<lines_.size(); ++i ) {
+		QVector< ScannedLine > newLines = lines_[i].collapseLine( image, stats );
+		if( ! newLines.empty() ) {//line returns lines on which she was divided
+			lines_[i]=newLines[0];
+			for( int j=1; j<newLines.size(); ++j ) {
+				++i;
+				lines_.insert( i, newLines[j] );
+			}
+		} else {
+			lines_.remove( i );
+			--i;
+		}
+	}
 }
 
 void ScannedPage::connectDescriptionsToImages(StatsPack stats) {
-    QImage image( fileMono_ );
-    connectDescriptionsToImages(stats, image);
+	QImage image( fileMono_ );
+	connectDescriptionsToImages(stats, image);
 }
 
 void ScannedPage::connectDescriptionsToImages(StatsPack stats, const QImage &image) {
@@ -247,7 +248,7 @@ void ScannedPage::connectDescriptionsToImages(StatsPack stats, const QImage &ima
 			lines_.remove( i );
 			--i;
 		}
-    }
+	}
 }
 
 void ScannedPage::findParagraphs(StatsPack stats) {
@@ -309,16 +310,30 @@ void ScannedPage::findParagraphs(StatsPack stats) {
 
 void ScannedPage::findDividedWords() {
 	QImage image( fileMono_ );
-    findDividedWords(image);
+	findDividedWords(image);
 
 }
 
+void ScannedPage::findBaselines(){
+	QImage image(fileMono_);
+	findBaselines( image );
+}
+
+void ScannedPage::findBaselines(const QImage &image){
+
+	for( int i=0; i<lines_.size(); ++i ) {
+		if( ! lines_[i].isImage_ ) {
+			lines_[i].findBaselines(image);
+		}
+	}
+}
+
 void ScannedPage::findDividedWords(const QImage &image) {
-    for( int i=0; i<lines_.size(); ++i ) {
-        if( ! lines_[i].isImage_ ) {
-            lines_[i].checkIfHasDividedWordAtEnd( image );
-        }
-    }
+	for( int i=0; i<lines_.size(); ++i ) {
+		if( ! lines_[i].isImage_ ) {
+			lines_[i].checkIfHasDividedWordAtEnd( image );
+		}
+	}
 }
 
 void ScannedPage::checkNumberHeader(StatsPack stats, StatsNumberHeader & numHead) {
@@ -357,13 +372,13 @@ void ScannedPage::setNumberHeader(StatsPack stats, ScannedPage::PageNumber numbe
 }
 
 void ScannedPage::printDEbugImages(StatsPack stats) {
-    QImage inputImage( fileMono_ );
-    QImage image = printDEbugImages(stats, inputImage);
-    image.save( fileMono_ + ".DE.png" , "PNG" );
+	QImage inputImage( fileMono_ );
+	QImage image = printDEbugImages(stats, inputImage);
+	image.save( fileMono_ + ".DE.png" , "PNG" );
 }
 
 QImage ScannedPage::printDEbugImages(StatsPack stats, const QImage &inputImage) {
-    QImage image=inputImage.convertToFormat( QImage::Format_RGB32 );
+	QImage image=inputImage.convertToFormat( QImage::Format_RGB32 );
 	image.setDotsPerMeterX( Consts::Print::DotsPerMeter( stats.height_ ) );
 	image.setDotsPerMeterY( Consts::Print::DotsPerMeter( stats.height_ ) );
 	QPainter painter( &image );
@@ -389,6 +404,8 @@ QImage ScannedPage::printDEbugImages(StatsPack stats, const QImage &inputImage) 
 
 		painter.setPen( QColor( 0, 0, 0, 255 ) );
 		painter.drawText( lines_[i], info );//, Qt::AlignLeft,
+		painter.drawLine( lines_[i].left(), lines_[i].top()+lines_[i].upperBaseline_, lines_[i].right(), lines_[i].top()+lines_[i].upperBaseline_ );
+		painter.drawLine( lines_[i].left(), lines_[i].top()+lines_[i].lowerBaseline_, lines_[i].right(), lines_[i].top()+lines_[i].lowerBaseline_ );
 
 	}
 	if( header_.isValid() ) {
@@ -416,7 +433,7 @@ QImage ScannedPage::printDEbugImages(StatsPack stats, const QImage &inputImage) 
 	painter.drawRect( image.width()/2, image.height()/2, stats.height_*4, stats.height_*3 );
 	painter.setPen( QColor( 255, 0, 0, 255 ) );
 	painter.drawText( image.width()/2, image.height()/2, stats.height_*4, stats.height_*3, Qt::AlignCenter | Qt::AlignVCenter, "Σ: " + QString::number( lines_.size() ) );
-    return image;
+	return image;
 }
 
 void ScannedPage::getNumHead(StatsPack stats, PrintedLine & numHead, double scalingRatio, int maxWordLength, bool fullColor) {

@@ -39,7 +39,6 @@ SOURCES  += main.cpp \
     printedpage.cpp \
     printedline.cpp \
     printedpagestat.cpp \
-    printedpixelfont.cpp \
     license.cpp \
     processingthread.cpp \
     calibratewindow.cpp \
@@ -61,7 +60,6 @@ HEADERS  += version.hpp \
     printedpage.hpp \
     printedline.hpp \
     printedpagestat.hpp \
-    printedpixelfont.hpp \
     license.hpp \
     processingthread.hpp \
     calibratewindow.hpp \

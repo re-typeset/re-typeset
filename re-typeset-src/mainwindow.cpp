@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
 	stopText_=tr( "Stop" );
 	ui->outStartButton->setText( startText_ );
 
-    Consts::configure(calibrate_->getParametersFormLayout());
-    calibrate_->connectSpinBoxes();
+	Consts::configure(calibrate_->getParametersFormLayout());
+	calibrate_->connectSpinBoxes();
 }
 
 MainWindow::~MainWindow() {
@@ -113,23 +113,23 @@ void MainWindow::on_srcDirButton_clicked() {
 	QString dir=QFileDialog::getExistingDirectory( this, tr("Choose source directory"),
 												   ui->srcDir->text(), QFileDialog_ShowAllFiles );
 	dir=changeFileToBasedir( dir );
-    if( ! dir.isEmpty() ) {
-        ui->srcDir->setText( dir );
-        calibrate_->setDirPath( dir );
-        dir+=".out";
+	if( ! dir.isEmpty() ) {
+		ui->srcDir->setText( dir );
+		calibrate_->setDirPath( dir );
+		dir+=".out";
 
-        QFileInfo fi( ui->srcDir->text() );
-        if( QDir( dir ).exists() ) {
-            ui->destDir->setText( dir );
-            ui->destDirCreate->setText( tr( "Create directory: NAME.out" ) );
-            ui->destDirCreate->setEnabled( false );
-        } else {
-            ui->destDirCreate->setText( tr( "Create directory: \n``%1.out''" ).arg( fi.baseName() ) );
-            ui->destDirCreate->setEnabled( true );
-        }
-		ui->outFilesPrefix->setText( fi.baseName() );
+		QFileInfo fi( ui->srcDir->text() );
+		if( QDir( dir ).exists() ) {
+			ui->destDir->setText( dir );
+			ui->destDirCreate->setText( tr( "Create directory: NAME.out" ) );
+			ui->destDirCreate->setEnabled( false );
+		} else {
+			ui->destDirCreate->setText( tr( "Create directory: \n``%1.out''" ).arg( fi.fileName() ) );
+			ui->destDirCreate->setEnabled( true );
+		}
+		ui->outFilesPrefix->setText( fi.fileName() );
 		QString div="--";
-		QStringList authorTitle = fi.baseName().split( div );
+		QStringList authorTitle = fi.fileName().split( div );
 
 		if( authorTitle.size() == 2 ) {
 			if( ui->authorEdit->text().isEmpty() ) {
@@ -140,7 +140,7 @@ void MainWindow::on_srcDirButton_clicked() {
 			}
 		}
 
-    }
+	}
 }
 
 void MainWindow::on_destDirCreate_clicked() {
@@ -162,17 +162,17 @@ void MainWindow::on_destDirButton_clicked() {
 
 void MainWindow::on_treshSlider_sliderMoved(int position) {
 	ui->treshVal->setValue( position );
-    calibrate_->setTreshold( position );
+	calibrate_->setTreshold( position );
 }
 
 void MainWindow::on_treshVal_valueChanged(int arg1) {
 	ui->treshSlider->setValue( arg1 );
-    calibrate_->setTreshold( arg1 );
+	calibrate_->setTreshold( arg1 );
 }
 
 void MainWindow::on_treshSlider_valueChanged(int value) {
 	ui->treshVal->setValue( value );
-    calibrate_->setTreshold( value );
+	calibrate_->setTreshold( value );
 }
 
 
@@ -202,14 +202,15 @@ void MainWindow::on_outStartButton_clicked() {
 			processingThread_.fullColor=ui->optionsFullColorOutput->isChecked();
 			processingThread_.justify=ui->optionsJustify->isChecked();
 			processingThread_.rotateImages=ui->optionsRotateImages->isChecked();
-            processingThread_.equalizeHistogram=ui->optionsEqualizeHistogram->isChecked();
-            processingThread_.comicMode=ui->optionsComicMode->isChecked();
+			processingThread_.equalizeHistogram=ui->optionsEqualizeHistogram->isChecked();
+			processingThread_.comicMode=ui->optionsComicMode->isChecked();
 			processingThread_.fileNamePrefix=ui->outFilesPrefix->text();
 			processingThread_.author=ui->authorEdit->text();
 			processingThread_.title=ui->titleEdit->text();
 
 			processingThread_.work=true;
 			processingThread_.progressBarSignalReciever=this;
+			processingThread_.createHelperScript=ui->optionsCreateScript->isChecked();
 
 			connect( &processingThread_, SIGNAL( finished() ), this, SLOT( processingFinished() ) );
 
@@ -266,7 +267,7 @@ void MainWindow::uIWidgetsSetDisabled(bool disabled) {
 	ui->textSize->setDisabled( disabled );
 	ui->predef->setDisabled( disabled );
 	ui->outFiles->setDisabled( disabled );
-    ui->actionShowDebugImages->setDisabled( disabled );
+	ui->actionShowDebugImages->setDisabled( disabled );
 	ui->author->setDisabled( disabled );
 	ui->title->setDisabled( disabled );
 }
@@ -301,11 +302,11 @@ void MainWindow::on_actionAbout_triggered() {
 }
 
 void MainWindow::on_actionAboutQt_triggered() {
-   QMessageBox::aboutQt( this, "Qt" );
+	QMessageBox::aboutQt( this, "Qt" );
 }
 
 void MainWindow::on_actionExit_triggered() {
-    qApp->exit( 0 );
+	qApp->exit( 0 );
 }
 
 
@@ -332,7 +333,7 @@ void MainWindow::loadLanguage(const QString & rLanguage) {
 		QLocale locale = QLocale(currLang_);
 		QLocale::setDefault(locale);
 		switchTranslator(translator_, QString("res/re-typeset_%1.qm").arg(rLanguage));
-        switchTranslator(translatorQt_, QString("languages/qt_%1.qm").arg(rLanguage));
+		switchTranslator(translatorQt_, QString("languages/qt_%1.qm").arg(rLanguage));
 	}
 }
 
@@ -396,6 +397,6 @@ void MainWindow::slotLanguageChanged(QAction * action) {
 
 void MainWindow::on_optionsCalibrateAlg_clicked()
 {
-	calibrate_->show();    
-    calibrate_->setZoomFit();
+	calibrate_->show();
+	calibrate_->setZoomFit();
 }

@@ -5,14 +5,14 @@
 
 namespace Letters
 {
-	const int NumLines = 5;
-    const int SpaceColumns = 5;
-	struct Letter {
-		unsigned char lines[NumLines];
-        unsigned char numColumns();
-	};
+const int NumLines = 5;
+const int SpaceColumns = 5;
+struct Letter {
+	unsigned char lines[NumLines];
+	unsigned char numColumns();
+};
 
-    Letter getLetter(char c);
+Letter getLetter(char c);
 
 
 } //letters

@@ -27,12 +27,13 @@ public:
 	bool fullColor;
 	bool justify;
 	bool rotateImages;
-    bool equalizeHistogram;
+	bool equalizeHistogram;
 	QString fileNamePrefix;
 	QString author;
 	QString title;
 	int status;
 	bool work;
+	bool createHelperScript;
 
 	QObject * progressBarSignalReciever;
 

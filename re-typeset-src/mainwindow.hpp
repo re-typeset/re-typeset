@@ -70,10 +70,10 @@ private slots:
 	void on_predefLines25_clicked();
 	void on_destDirCreate_clicked();
 
-    void on_actionAbout_triggered();
-    void on_actionAboutQt_triggered();
+	void on_actionAbout_triggered();
+	void on_actionAboutQt_triggered();
 
-    void on_actionExit_triggered();
+	void on_actionExit_triggered();
 
 	void on_optionsCalibrateAlg_clicked();
 
@@ -82,7 +82,7 @@ private:
 	QFileDialog::Option QFileDialog_ShowAllFiles; //No '0' value in 'enum Option' in 'QFileDialog' class
 	CalibrateWindow * calibrate_;
 
-//MULTILANG
+	//MULTILANG
 protected slots:
 	void slotLanguageChanged(QAction* action);
 private:
@@ -90,15 +90,15 @@ private:
 	void createLanguageMenu(void);
 	QTranslator translator_; //contains the translations for this application
 	QTranslator translatorQt_; //contains the translations for qt
-	QString currLang_; //contains the currently loaded language 
+	QString currLang_; //contains the currently loaded language
 	QString langPath_; //Path of language files. This is always fixed to /languages.
 protected:
 	void changeEvent( QEvent * event );
 	void switchTranslator(QTranslator & translator, const QString & filename);
-//end MULTILANG
+	//end MULTILANG
 
 private:
-    QString startText_;
+	QString startText_;
 	QString stopText_;
 	ProcessingThread processingThread_;
 	QString changeFileToBasedir( QString dir );

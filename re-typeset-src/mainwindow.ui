@@ -533,6 +533,22 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QCheckBox" name="optionsCreateScript">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>216</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create metadata script</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="outFiles">
     <property name="geometry">
@@ -738,7 +754,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">

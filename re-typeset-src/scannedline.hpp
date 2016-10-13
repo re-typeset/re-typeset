@@ -39,6 +39,8 @@ public:
 	bool toDivide_;
 	int  blockLeftPos_;
 	int spaceToNextLine_;
+	int upperBaseline_;
+	int lowerBaseline_;
 
 	void setNextLineTop(int value);
 
@@ -52,6 +54,7 @@ public:
 	void preciseDivideHorizontal( const QImage & image, StatsPack stats, QVector < ScannedLine > & out, int level=0);
 	void preciseDivideVertical( const QImage & image, StatsPack stats, QVector < ScannedLine > & out, int level=0 );
 	void checkIfHasDividedWordAtEnd( const QImage & image);
+	void findBaselines(const QImage & image );
 
 	void getWords( const QImage & imageMono, const QImage & imageColor, StatsPack stats,
 				   PrintedLine & par , double scalingRatio, int maxWordLength, bool fullColor=false);

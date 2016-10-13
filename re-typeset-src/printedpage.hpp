@@ -23,17 +23,16 @@
 #include "stats.hpp"
 #include "printedline.hpp"
 #include "printedpagestat.hpp"
-#include "printedpixelfont.hpp"
 #include <QPair>
 #include <QDateTime>
 
 class PrintedPage
 {
 public:
-    PrintedPage();
+	PrintedPage();
 	virtual ~PrintedPage();
 	PrintedPage( int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-                  bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState=false );
+				 bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState=false );
 
 	void addNumberHeader( PrintedLine & numHead, int srcPageNum );
 
@@ -49,7 +48,7 @@ public:
 
 	int numTocItems();
 
-    void createTitlePage();
+	void createTitlePage();
 	void createTocPage(QVector<QPair<QPair<int, int>, PrintedLine> > & toc );
 
 protected:
@@ -65,7 +64,7 @@ protected:
 	bool isDividedWord_;
 	bool justify_;
 	bool rotateImages_;
-    bool equalizeHistogram_;
+	bool equalizeHistogram_;
 	bool disableProgressBar;
 	int srcPageNum_;
 
@@ -73,9 +72,9 @@ protected:
 	bool comicMode_;
 	bool DEbugState_;
 	QVector< PrintedPageStat > outStat_;
-    QString author_;
-    QString title_;
-    QString date_;
+	QString author_;
+	QString title_;
+	QString date_;
 
 	QImage join( const QImage & a, const QImage & b );
 

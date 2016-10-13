@@ -105,36 +105,36 @@ TEST(LettersTest, GetLetter_WholeRange)
 	Letters::Letter l;
 	clearLetter(l);
 	EXPECT_FALSE( letterIsValid(l) );
-    int cnt = 0;
+	int cnt = 0;
 
-    for( int i=CHAR_MIN; i<=CHAR_MAX; ++i ) {
-        char c = i;
+	for( int i=CHAR_MIN; i<=CHAR_MAX; ++i ) {
+		char c = i;
 		clearLetter(l);
-        l = Letters::getLetter( c );
-        EXPECT_TRUE( letterIsValid(l) ) << "DBG: c=" << (int)c ;
-        ++cnt;
-	}	
-    EXPECT_EQ( cnt, 256 );
+		l = Letters::getLetter( c );
+		EXPECT_TRUE( letterIsValid(l) ) << "DBG: c=" << (int)c ;
+		++cnt;
+	}
+	EXPECT_EQ( cnt, 256 );
 	//EXPECT NO CRASH
 }
 
 TEST(LettersTest, LetterWidth)
 {
-    Letters::Letter l;
+	Letters::Letter l;
 
-    l = Letters::getLetter( '.' );
-    EXPECT_EQ( 1, l.numColumns() );
+	l = Letters::getLetter( '.' );
+	EXPECT_EQ( 1, l.numColumns() );
 
-    l = Letters::getLetter( 'j' );
-    EXPECT_EQ( 2, l.numColumns() );
+	l = Letters::getLetter( 'j' );
+	EXPECT_EQ( 2, l.numColumns() );
 
-    l = Letters::getLetter( '1' );
-    EXPECT_EQ( 3, l.numColumns() );
-
-    l = Letters::getLetter( 't' );
+	l = Letters::getLetter( '1' );
 	EXPECT_EQ( 3, l.numColumns() );
 
-    l = Letters::getLetter( 'M' );
-    EXPECT_EQ( 5, l.numColumns() );
+	l = Letters::getLetter( 't' );
+	EXPECT_EQ( 3, l.numColumns() );
+
+	l = Letters::getLetter( 'M' );
+	EXPECT_EQ( 5, l.numColumns() );
 }
 

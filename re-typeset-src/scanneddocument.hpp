@@ -39,10 +39,10 @@ public:
 	 */
 	void findWords( bool comicMode=false, bool findDividedWords=true );
 
-	int print( int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling,
-			   bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix,
-			   QString author, QString title,
-			   bool equalizeHistogram );
+	int print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling,
+			  bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix,
+			  QString author, QString title,
+			  bool equalizeHistogram , bool createScript);
 
 signals:
 	void newProgressBarValue(int percent, QString name="", int n=0, int of=0);
@@ -59,6 +59,7 @@ protected:
 	bool header_;
 
 	QVector < ScannedPage > pages_;
+	void createHelperScript(QString author, QString title);
 
 
 };

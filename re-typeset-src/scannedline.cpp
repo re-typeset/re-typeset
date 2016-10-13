@@ -260,7 +260,7 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 	for( x=this->left()+this->width()-1, endX=this->left()+this->width()-this->height()*Consts::DividedWord::MaxLength; x>endX; --x ) {
 		int c=0;
 		for( int y=this->top(), endY=this->top()+this->height(); y<endY; ++y ) {
-			if( y < this->top()+this->height()*Consts::DividedWord::UpperGap ) {
+			if( y < this->top()+this->upperBaseline_ + (this->lowerBaseline_-this->upperBaseline_)*Consts::DividedWord::UpperGap ) {
 				if( image.pixel( x, y ) == black ) {
 					if( dirt == 0 ) {
 						++dirt;
@@ -269,7 +269,7 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 						y=endY;
 					}
 				}
-			} else if( y <= this->top()+this->height()*(1-Consts::DividedWord::LowerGap) ) {
+			} else if( y <= this->top()+this->lowerBaseline_ - (this->lowerBaseline_-this->upperBaseline_)*Consts::DividedWord::LowerGap ) {
 				if( image.pixel( x, y ) == black ) {
 					++c;
 				}
@@ -307,8 +307,45 @@ void ScannedLine::checkIfHasDividedWordAtEnd(const QImage & image ) {
 	}
 }
 
+void ScannedLine::findBaselines(const QImage &image)
+{
+	QRgb black=QColor( 0, 0 ,0 ).rgb();
+	QVector<int> Vvalues;
+	int x,y, maxX, maxY;
+	const int BaselineCheckPoints=50;
+	int div = qMax( this->width()/BaselineCheckPoints, 1 );
+
+	for( x=this->left(), maxX=this->left()+this->width(); x<maxX; x+=div ) {//for column
+		for( y=this->top(), maxY=this->top()+this->height(); y<maxY; ++y ) {
+			if( image.pixel(x,y) == black ){
+				Vvalues.append(y-this->top());
+				break;
+			}
+		}
+	}
+	if( Vvalues.size() > 0 ) {
+		std::nth_element( Vvalues.begin(), Vvalues.begin()+Vvalues.size()/2, Vvalues.end() );
+		upperBaseline_ = Vvalues[Vvalues.size()/2];
+	}
+
+	Vvalues.clear();
+
+	for( x=this->left(), maxX=this->left()+this->width(); x<maxX; x+=div ) {//for column
+		for( y=this->top()+this->height()-1, maxY=this->top(); y>=maxY; --y ) {
+			if( image.pixel(x,y) == black ){
+				Vvalues.append(y-this->top());
+				break;
+			}
+		}
+	}
+	if( Vvalues.size() > 0 ) {
+		std::nth_element( Vvalues.begin(), Vvalues.begin()+Vvalues.size()/2, Vvalues.end() );
+		lowerBaseline_ = Vvalues[Vvalues.size()/2];
+	}
+}
+
 void ScannedLine::getWords(const QImage & imageMono, const QImage & imageColor, StatsPack stats, PrintedLine & par,
-							double scalingRatio, int maxWordLength, bool fullColor) {
+						   double scalingRatio, int maxWordLength, bool fullColor) {
 
 
 	QRgb black=QColor( 0, 0 ,0 ).rgb();
@@ -390,9 +427,9 @@ bool ScannedLine::cutAccidentiallyConnectedLines(const QImage & image, StatsPack
 						   + (2*Consts::AccidentiallyConnectedLines::MaxNumberOfLines-3)*stats.divToNextLine_ )/2 ) {//div by 2
 
 		if( Consts::AccidentiallyConnectedLines::CanCut( stats,
-														  this->blackPixelsInRow( image, this->top()+this->height()*1/4),
-														  this->blackPixelsInRow( image, this->top()+this->height()*2/4),
-														  this->blackPixelsInRow( image, this->top()+this->height()*3/4) ) ) {//can cut
+														 this->blackPixelsInRow( image, this->top()+this->height()*1/4),
+														 this->blackPixelsInRow( image, this->top()+this->height()*2/4),
+														 this->blackPixelsInRow( image, this->top()+this->height()*3/4) ) ) {//can cut
 
 			this->isImage_=false;
 			out.push_back( *this );
@@ -408,11 +445,11 @@ bool ScannedLine::cutAccidentiallyConnectedLines(const QImage & image, StatsPack
 	} else {//div by 3
 
 		if( Consts::AccidentiallyConnectedLines::CanCut( stats,
-														  this->blackPixelsInRow( image, this->top()+this->height()*1/6),
-														  this->blackPixelsInRow( image, this->top()+this->height()*2/6),
-														  this->blackPixelsInRow( image, this->top()+this->height()*3/6),
-														  this->blackPixelsInRow( image, this->top()+this->height()*4/6),
-														  this->blackPixelsInRow( image, this->top()+this->height()*5/6) ) ) {//can cut
+														 this->blackPixelsInRow( image, this->top()+this->height()*1/6),
+														 this->blackPixelsInRow( image, this->top()+this->height()*2/6),
+														 this->blackPixelsInRow( image, this->top()+this->height()*3/6),
+														 this->blackPixelsInRow( image, this->top()+this->height()*4/6),
+														 this->blackPixelsInRow( image, this->top()+this->height()*5/6) ) ) {//can cut
 
 			this->isImage_=false;
 			out.push_back( *this );

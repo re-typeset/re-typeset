@@ -22,7 +22,7 @@
 #include <QApplication>
 
 int Consts::MinHeightForOneVerticalDiv(StatsPack stats) {
-//	return (int)( (double)(2*stats.height_ + stats.divToNextLine_)*1.2 ); no math formulas protection
+	//	return (int)( (double)(2*stats.height_ + stats.divToNextLine_)*1.2 ); no math formulas protection
 	return (int)( (double)( 2*stats.height_ ) );
 }
 
@@ -40,7 +40,7 @@ int Consts::AccidentiallyConnectedLines::MaxHeight(StatsPack stats) {
 }
 
 bool Consts::AccidentiallyConnectedLines::CanCut(StatsPack stats, int textWeight1, int spaceWeight1,
-												  int textWeight2, int spaceWeight2, int textWeight3) {
+												 int textWeight2, int spaceWeight2, int textWeight3) {
 	if( qMin( qMin( textWeight1, textWeight2 ), textWeight3 ) > qMax( spaceWeight1, spaceWeight2 )*TextToSpaceCoefficient
 			&& spaceWeight1 < WeightOfConnectionInMedian*stats.height_
 			&& spaceWeight2 < WeightOfConnectionInMedian*stats.height_ ) {

@@ -35,10 +35,14 @@
 //    qt5-base
 //    qt5-imageformats (for tiff support)
 
-#define VERSION "1.1.0"
+#define VERSION "1.2.0"
 //# MAJOR.MINOR.PATCH understand as in http://semver.org/spec/v2.0.0.html
 
 // Versions history:
+// 1.2.0: Added  watermarks with book's metadata,  generate sctipt for setting
+//        metadata with  ebook-meta program (can be used after creating e-book
+//        from generated images. Additionally other small fixes in code.
+//
 // 1.1.0: New features available:  live configuration of algorithm parameters,
 //        histogram equalisation for images (beta),  new table of contents and
 //        title page -- user can write author and title of book.  Additionally

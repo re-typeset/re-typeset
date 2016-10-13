@@ -6,12 +6,12 @@
 class PaintDeviceQImage : public LettersWriter::PaintDevice
 {
 public:
-    PaintDeviceQImage( QImage & image );
-    virtual void setPixel(const QPoint &position, uint index_or_rgb);
-    virtual int width() const;
-    virtual int height() const;
+	PaintDeviceQImage( QImage & image );
+	virtual void setPixel(const QPoint &position, uint index_or_rgb);
+	virtual int width() const;
+	virtual int height() const;
 private:
-    QImage & image_;
+	QImage & image_;
 };
 
 #endif // PAINTDEVICEQIMAGE_H

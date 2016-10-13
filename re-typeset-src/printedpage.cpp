@@ -36,18 +36,18 @@ PrintedPage::~PrintedPage() {
 }
 
 PrintedPage::PrintedPage(int width, int height, int margin, int fontHeight, bool justify, bool rotateImages,
-                           bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState)
-    : margin_( margin )
-    , isDividedWord_(false)
-    , justify_(justify)
-    , rotateImages_(rotateImages)
-    , equalizeHistogram_(equalizeHistogram)
-    , outLastPage_(-1)
-    , comicMode_(comicMode)
-    , DEbugState_( DEbugState )
-    , author_(author)
-    , title_(title)
-    , date_(QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ))
+						 bool comicMode, bool equalizeHistogram, QString author, QString title, bool DEbugState)
+	: margin_( margin )
+	, isDividedWord_(false)
+	, justify_(justify)
+	, rotateImages_(rotateImages)
+	, equalizeHistogram_(equalizeHistogram)
+	, outLastPage_(-1)
+	, comicMode_(comicMode)
+	, DEbugState_( DEbugState )
+	, author_(author)
+	, title_(title)
+	, date_(QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ))
 {
 	image_ = new QImage( width, height, QImage::Format_RGB32 );
 	image_->fill( Qt::white );
@@ -97,10 +97,10 @@ bool PrintedPage::printImagesFromQueue(bool final) {//true -- create new page
 			if( imageQueue_.first().height() > image_->height() ) {
 				imageQueue_.first()=imageQueue_.first().scaledToHeight( image_->height(), Qt::SmoothTransformation );
 			}
-            if( equalizeHistogram_ ) {
-                ExtendedImage tmp(imageQueue_.first());
-                imageQueue_.first() = tmp.histogramEqualization();
-            }
+			if( equalizeHistogram_ ) {
+				ExtendedImage tmp(imageQueue_.first());
+				imageQueue_.first() = tmp.histogramEqualization();
+			}
 			image_->fill( Qt::white );
 			disableProgressBar=true;
 			int yDel=(image_->height()-imageQueue_.first().height())/2;
@@ -175,10 +175,10 @@ bool PrintedPage::addParagraph(PrintedLine & paragraph) {
 				paragraph.first()=paragraph.first().scaledToWidth( image_->width(), Qt::SmoothTransformation );
 			}
 			if( ( ! comicMode_ ) && ( paragraph.first().height() + lineHeight_ + margin_ + cursorY <= image_->height() ) ) {
-                if( equalizeHistogram_ ) {
-                    ExtendedImage tmp(paragraph.first());
-                    paragraph.first() = tmp.histogramEqualization();
-                }
+				if( equalizeHistogram_ ) {
+					ExtendedImage tmp(paragraph.first());
+					paragraph.first() = tmp.histogramEqualization();
+				}
 				int del=(image_->width()-paragraph.first().width())/2;
 				cursorY+=lineHeight_;
 				writer.drawImage( del, cursorY, paragraph.first() );
@@ -254,20 +254,20 @@ void PrintedPage::saveAndClear(QString fileName, bool hardMargins) {
 		image_->setPixel( image_->width()-1, image_->height()-1, QColor( 0, 0, 0 ).rgb() );
 	}
 
-    PaintDeviceQImage pdimg(*image_);
-    LettersWriter lw(pdimg);
+	PaintDeviceQImage pdimg(*image_);
+	LettersWriter lw(pdimg);
 
-    QRect areaBottom(0, image_->height()-Letters::NumLines, image_->width(), Letters::NumLines );
-    QString textBottom=QString("Re-Typeset %1 ($) P.Mika, M.Garbiak").arg(VERSION);
-    lw.write(textBottom, areaBottom, QColor( 224, 224, 224 ).rgb() );
+	QRect areaBottom(0, image_->height()-Letters::NumLines, image_->width(), Letters::NumLines );
+	QString textBottom=QString("Re-Typeset %1 ($) P.Mika, M.Garbiak").arg(VERSION);
+	lw.write(textBottom, areaBottom, QColor( 224, 224, 224 ).rgb() );
 
-    QRect areaLeft(0, 0, Letters::NumLines, image_->height() );
-    QString textLeft=QString("%1 -- %2").arg(author_).arg(title_);
-    lw.write(textLeft, areaLeft, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
+	QRect areaLeft(0, 0, Letters::NumLines, image_->height() );
+	QString textLeft=QString("%1 -- %2").arg(author_).arg(title_);
+	lw.write(textLeft, areaLeft, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
 
 	QRect areaRight(image_->width()-Letters::NumLines, image_->height()/2, Letters::NumLines, image_->height()/2 );
-    QString textRight=date_;
-    lw.write(textRight, areaRight, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
+	QString textRight=date_;
+	lw.write(textRight, areaRight, QColor( 224, 224, 224 ).rgb(), lw.Vertical );
 
 	image_->save( fileName, "PNG" );
 	image_->fill( Qt::white );
@@ -386,13 +386,13 @@ void PrintedPage::createTitlePage() {
 
 	writer.setFont( Consts::Print::FontBig() );
 	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
-    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, author_ );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, author_ );
 
 	nextY+=line.height() + lineHeight_*2;
 
 	writer.setFont( Consts::Print::FontBig() );
 	line.setRect( 0, nextY, image_->width(), lineHeight_*3 );
-    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, title_ );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, title_ );
 
 	nextY+=line.height() + lineHeight_*4;
 
@@ -414,7 +414,7 @@ void PrintedPage::createTitlePage() {
 	nextY+=line.height() + lineHeight_;
 
 	line.setRect( 0, nextY, image_->width(), lineHeight_ );
-    writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, date_ );
+	writer.drawText( line, Qt::AlignCenter|Qt::TextWordWrap, date_ );
 
 
 

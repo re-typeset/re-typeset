@@ -19,6 +19,7 @@
 #include "scanneddocument.hpp"
 #include "printedline.hpp"
 #include "extendedimage.hpp"
+#include "version.hpp"
 
 ScannedDocument::ScannedDocument() {
 	;//NOOP
@@ -41,8 +42,8 @@ ScannedDocument::~ScannedDocument() {
 int ScannedDocument::loadPages(int treshold) {
 	QDir dir(srcDir_);
 	QStringList filesInDir=dir.entryList(
-					  QDir::Files | QDir::NoDotAndDotDot,
-					  QDir::Name );
+							   QDir::Files | QDir::NoDotAndDotDot,
+							   QDir::Name );
 
 	newProgressBarValue( 0, tr("loading images"), Consts::Progress::LoadNumber, Consts::Progress::TotalNumber );
 	if( ! (*work_) ) {
@@ -101,6 +102,7 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 		page.trimDivideLines( stats );
 		page.connectDescriptionsToImages( stats );
 		page.findParagraphs( stats );
+		page.findBaselines();
 		if( findDividedWords ) {
 			page.findDividedWords();
 		}
@@ -134,11 +136,15 @@ void ScannedDocument::findWords(bool comicMode, bool findDividedWords) {
 	}
 }
 
-int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, QString author, QString title, bool equalizeHistogram ) {
+int ScannedDocument::print(int width, int height, int margin, int fontHeight, bool hardMargins, bool noUpscalling, bool fullColor, bool justify, bool rotateImages, bool comicMode, QString fileNamePrefix, QString author, QString title, bool equalizeHistogram, bool createScript ) {
 	if( ! (*work_) ) {
 		return 0;
 	}
 	newProgressBarValue( Consts::Progress::PrintDelay, tr("generating images"), Consts::Progress::PrintNumber, Consts::Progress::TotalNumber );
+
+	if( createScript ) {
+		createHelperScript(author, title);
+	}
 
 	PrintedLine paragraph;
 	PrintedLine numHead;
@@ -150,7 +156,7 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 		fontHeight=stats.height_;
 	}
 	int maxWordLength=Consts::MaxWordLengthInOutPageWidth*(width-2*margin)/scalingRatio;
-    PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, equalizeHistogram, author, title, DEbugState_ );
+	PrintedPage destPage( width, height, margin, fontHeight, justify, rotateImages, comicMode, equalizeHistogram, author, title, DEbugState_ );
 
 	double numTocStep=(double)pages_.size()/destPage.numTocItems();
 	double numTocCurrentStep=numTocStep;
@@ -262,9 +268,31 @@ int ScannedDocument::print(int width, int height, int margin, int fontHeight, bo
 	destPage.createTocPage( toc );
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_002.png", hardMargins );
 
-    destPage.createTitlePage();
+	destPage.createTitlePage();
 	destPage.saveAndClear( destDir_ + "/" + fileNamePrefix + "_001.png", hardMargins );
 
 
-    return number-1;
+	return number-1;
+}
+
+void ScannedDocument::createHelperScript(QString author, QString title)
+{
+	QString scriptName = destDir_ + ".ebook-meta.sh";
+	QFile scriptFile(scriptName);
+	if( ! scriptFile.open(QIODevice::WriteOnly | QIODevice::Text) ) {
+		return;
+	}
+	QDir di( destDir_ );
+	QString mobi = di.dirName() + ".mobi";
+	mobi = mobi.replace( "\"", "\\\"");
+	author = author.replace( "\"", "\\\"");
+	title = title.replace( "\"", "\\\"");
+
+	QTextStream out(&scriptFile);
+	QString prog = QString( "Re-Typeset %1" ).arg( VERSION );
+	out << QString( "#!/bin/bash\n"
+					"# Script for setting e-book metadata created by %1 application.\n"
+					"\n"
+					"ebook-meta \"%2\" --authors \"%3\" --title \"%4\" --book-producer \"%5\""
+					"\n" ).arg( prog, mobi, author, title, prog );
 }

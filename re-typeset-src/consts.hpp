@@ -100,8 +100,8 @@ static constexpr int TextToSpaceCoefficient = 10;
 static constexpr int MaxNumberOfLines = 3;
 }
 namespace DividedWord {
-static constexpr double UpperGap=11.0/31;//10.0/31//11.0/31
-static constexpr double LowerGap=9.0/31;
+static constexpr double UpperGap=3.0/21;//10.0/31//11.0/31
+static constexpr double LowerGap=3.0/21;
 static constexpr double MaxHeight=0.2;//0.15;
 static constexpr double MinLength=1.0/6;
 static constexpr double MaxLength=1.0/3;

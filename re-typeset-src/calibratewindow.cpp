@@ -78,10 +78,11 @@ void CalibrateWindow::reloadImage()
 		ExtendedImage imageColor( fileColor );
 		inputImage_ = imageColor.convertToMonoImage( treshold_ );
 		setWindowTitle( QString("%1 (%2)").arg(filesInDir[imageNum_], dirPath_));
+		runAlgortithm();
 	} else {
 		inputImage_=QImage();
 	}
-	runAlgortithm();
+
 }
 
 void CalibrateWindow::runAlgortithm()
@@ -101,6 +102,7 @@ void CalibrateWindow::runAlgortithm()
 	page.trimDivideLines( stats, inputImage_ );
 	page.connectDescriptionsToImages( stats, inputImage_ );
 	page.findParagraphs( stats );
+	page.findBaselines( inputImage_ );
 
 	page.findDividedWords( inputImage_);
 
